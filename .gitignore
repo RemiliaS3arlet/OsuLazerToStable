@@ -1,0 +1,16 @@
+bin/
+obj/
+dist/
+logs/
+*.user
+*.suo
+FodyWeavers.xml
+FodyWeavers.xsd
+colldb-selftest.bin
+tools/models/
+tools/*.log
+tools/schema-dump.txt
+tools/reflect-out.txt
+tools/dryrun.log
+tools/portable/
+*.zip
