@@ -13,4 +13,7 @@ tools/schema-dump.txt
 tools/reflect-out.txt
 tools/dryrun.log
 tools/portable/
+.ghconfig/
+.tmp/
+release-single/
 *.zip
