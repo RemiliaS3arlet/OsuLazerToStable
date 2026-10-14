@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sayobot API</title>
+</head>
+<body>
+    <h1>API 使用帮助</h1>
+    <p><a href="https://www.showdoc.cc/SoulDee?page_id=3969517351482508">beatmaps API</a>  提供地图检索、下载，各种资源的链接格式等</p>
+    <p><a href="https://docs.qq.com/sheet/DS3FpaU5uQWhpY0dx">O2 通信协议</a>   O2系列触盘的通信协议</p>
+</body>
+</html>

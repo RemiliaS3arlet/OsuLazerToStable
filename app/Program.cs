@@ -23,6 +23,11 @@ internal static class CliRunner
     {
         try { Console.OutputEncoding = Encoding.UTF8; } catch { /* 输出重定向时控制台不可用 */ }
 
+        // ---- sayobot 下载子命令 ----
+        string? dlArg = GetArg(args, "--sayobot-dl");
+        if (dlArg != null)
+            return RunSayobotDlAsync(args, dlArg).GetAwaiter().GetResult();
+
         // ---- 倍速生成子命令 ----
         string? rateInput = GetArg(args, "--rate");
         if (rateInput != null)
@@ -113,6 +118,46 @@ internal static class CliRunner
         catch (Exception e)
         {
             Console.WriteLine("生成失败: " + e.Message);
+            return 1;
+        }
+    }
+
+    private static async Task<int> RunSayobotDlAsync(string[] args, string input)
+    {
+        if (!SayobotClient.TryParseSid(input, out long sid))
+        {
+            Console.WriteLine("无法解析谱面集 ID: " + input);
+            return 1;
+        }
+        string dir = GetArg(args, "--dl-dir") ?? Directory.GetCurrentDirectory();
+        try
+        {
+            Directory.CreateDirectory(dir);
+            var info = await SayobotClient.GetMapInfoAsync(sid, CancellationToken.None);
+            string fname = TransferEngine.SanitizeName($"{info.Sid} {info.Artist} - {info.Title}.osz");
+            string path = Path.Combine(dir, fname);
+            Console.WriteLine($"谱面: {info.Artist} - {info.Title}（sid {info.Sid}）");
+            Console.WriteLine($"保存: {path}");
+            long lastPct = -1;
+            await SayobotClient.DownloadAsync(sid, path, (done, total) =>
+            {
+                if (total > 0)
+                {
+                    long pct = done * 100 / total;
+                    if (pct != lastPct)
+                    {
+                        lastPct = pct;
+                        Console.Write($"\r{Math.Min(100, pct)}%   ");
+                    }
+                }
+            }, CancellationToken.None);
+            Console.WriteLine();
+            Console.WriteLine("下载完成: " + path);
+            return 0;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("下载失败: " + e.Message);
             return 1;
         }
     }

@@ -1,0 +1,2715 @@
+{
+ "4k": [
+  {
+   "course": "Reform段位",
+   "levels": [
+    {
+     "level": "Reform 1st",
+     "songs": [
+      "Miracle Chance",
+      "Want U 2",
+      "Shelter",
+      "Tomorrow Parfume"
+     ],
+     "cum": [
+      878,
+      1574,
+      2528,
+      3695
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform 2nd",
+     "songs": [
+      "Flashes",
+      "Vermillion",
+      "Snow Storm",
+      "Eternal Drain"
+     ],
+     "cum": [
+      1107,
+      2012,
+      2967,
+      4454
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform 3rd",
+     "songs": [
+      "Dimention Tripper!!!!",
+      "Kirlian Shores",
+      "Entelechia",
+      "True Blue"
+     ],
+     "cum": [
+      1008,
+      1805,
+      2852,
+      4111
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform 4th",
+     "songs": [
+      "CrossOver",
+      "Ephemera",
+      "Shannon's Theorem",
+      "Angel Of Darkness"
+     ],
+     "cum": [
+      905,
+      2404,
+      3687,
+      5758
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform 5th",
+     "songs": [
+      "Energy Flower 3307",
+      "Brainfog",
+      "TDPDG",
+      "Elektric U-Phoria"
+     ],
+     "cum": [
+      1293,
+      3015,
+      4647,
+      6550
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform 6th",
+     "songs": [
+      "Sweet Cherry X",
+      "The Bird's Midair Heatstroke",
+      "Luv Lab 22ate!",
+      "M-A"
+     ],
+     "cum": [
+      1487,
+      2753,
+      4131,
+      6317
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform 7th",
+     "songs": [
+      "Last Chance",
+      "WAVE",
+      "five Five Five Guys",
+      "Hymn"
+     ],
+     "cum": [
+      2114,
+      3891,
+      4972,
+      8042
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform 8th",
+     "songs": [
+      "To The Limit",
+      "RATO",
+      "Trickstarz",
+      "Anguish"
+     ],
+     "cum": [
+      2177,
+      3486,
+      5094,
+      6683
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform 9th",
+     "songs": [
+      "Can't Take my Eyes",
+      "Cicadidae",
+      "Disconnected Trance",
+      "Firmament Castle Velier"
+     ],
+     "cum": [
+      2114,
+      4184,
+      5858,
+      8130
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform 10th",
+     "songs": [
+      "The Lost Dedicated",
+      "Rave 7.7",
+      "Oh Curry!",
+      "Chandelier"
+     ],
+     "cum": [
+      1906,
+      3366,
+      5089,
+      7481
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform alpha",
+     "songs": [
+      "Dark Sambaland",
+      "Odoru Mizushibuki",
+      "Makiba",
+      "LazorBeamz"
+     ],
+     "cum": [
+      2265,
+      3793,
+      6093,
+      9427
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform beta",
+     "songs": [
+      "Paradigm Shift",
+      "Blue Planet",
+      "Amber Starlight",
+      "Time to Say Goodbye"
+     ],
+     "cum": [
+      2274,
+      4582,
+      6322,
+      8623
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform gamma",
+     "songs": [
+      "Break",
+      "Fastest Crash",
+      "Reflec Streamz",
+      "We Luv Lama"
+     ],
+     "cum": [
+      1973,
+      3953,
+      5382,
+      9361
+     ],
+     "acc": [
+      91.05,
+      93.56,
+      92.66,
+      94.65
+     ]
+    },
+    {
+     "level": "Reform delta",
+     "songs": [
+      "Aquaris",
+      "Crescent Moon",
+      "Volcanic",
+      "Future Dominators"
+     ],
+     "cum": [
+      2018,
+      4729,
+      7997,
+      10626
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Reform epsilon",
+     "songs": [
+      "Rose Quartz",
+      "Forgotten",
+      "Mario Paint",
+      "Hitsugi to Futago"
+     ],
+     "cum": [
+      2128,
+      4680,
+      6874,
+      9703
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "course": "Malody段位 v3",
+   "levels": [
+    {
+     "level": "Regular 0th",
+     "songs": [
+      "Ikitoshi Ikerumono",
+      "Rambling Pleat",
+      "Yi Meng Qian Xiao",
+      "White Eternity"
+     ],
+     "cum": [
+      492,
+      1021,
+      1616,
+      2297
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 1st",
+     "songs": [
+      "Rex Incognito",
+      "Koiseyo Otome!",
+      "Break",
+      "KING"
+     ],
+     "cum": [
+      695,
+      1316,
+      2034,
+      3313
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 2nd",
+     "songs": [
+      "Stargazer",
+      "Seyana",
+      "Love Emotion!",
+      "Mermaid Girl"
+     ],
+     "cum": [
+      1397,
+      2487,
+      3292,
+      4504
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 3rd",
+     "songs": [
+      "Koi Kou Enishi",
+      "Onegai! Kon Kon Oinari-sama",
+      "The Last Page",
+      "Hoshi ga Furanai Machi"
+     ],
+     "cum": [
+      1055,
+      2544,
+      3832,
+      5621
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 4th",
+     "songs": [
+      "Umiyuri Kaiteitan",
+      "Fire in the sky",
+      "Icyxis",
+      "The Crimson Empire"
+     ],
+     "cum": [
+      1865,
+      3299,
+      4583,
+      6422
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 5th",
+     "songs": [
+      "Platinum Disco",
+      "Cute na Kanojo",
+      "Reimei Sketchbook",
+      "joker"
+     ],
+     "cum": [
+      1282,
+      2988,
+      4461,
+      6400
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 6th",
+     "songs": [
+      "Chocolate Disco",
+      "Call Me, Beep Me [If You Wanna Reap Me]",
+      "DIE IN THE SEA",
+      "unhappy century"
+     ],
+     "cum": [
+      1694,
+      3330,
+      5133,
+      7248
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 7th",
+     "songs": [
+      "Don't Stop the Music",
+      "Six Acid Strings",
+      "Arkadia [Illusion]",
+      "Valkyrie Revolutia"
+     ],
+     "cum": [
+      1701,
+      3500,
+      5632,
+      7531
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 8th",
+     "songs": [
+      "Don't let you down",
+      "Yoru ni Kakeru",
+      "Snow Veil -Shoujo to Kemono no Mori-",
+      "Positive Dance Time"
+     ],
+     "cum": [
+      2237,
+      4318,
+      6598,
+      8598
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 9th",
+     "songs": [
+      "Kikai Shoujo Gensou",
+      "cold planet",
+      "Stray Star",
+      "Unleashed World"
+     ],
+     "cum": [
+      2374,
+      4263,
+      6405,
+      8215
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 10th",
+     "songs": [
+      "Hiensou",
+      "Rocky Buinne",
+      "Yue Ai Yue Ye",
+      "Spin Eternally"
+     ],
+     "cum": [
+      2034,
+      3774,
+      6044,
+      8210
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 1st",
+     "songs": [
+      "Scirpion Dance",
+      "Tailin no Soul",
+      "Eiya no Parade",
+      "Onsoku Uchuu Ryokou"
+     ],
+     "cum": [
+      1952,
+      3965,
+      5918,
+      8029
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 2nd",
+     "songs": [
+      "Moments",
+      "Towards the Horizon",
+      "Torikago",
+      "Frontier Explorer"
+     ],
+     "cum": [
+      2107,
+      4060,
+      6446,
+      9120
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 3rd",
+     "songs": [
+      "Edison",
+      "INTERNET OVERDOSE",
+      "Euthanasia",
+      "Fin.ArcDeaR"
+     ],
+     "cum": [
+      2518,
+      5154,
+      7480,
+      9991
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 4th",
+     "songs": [
+      "ZENITHALIZE",
+      "Asymmetrical Grooves",
+      "Pure Ruby",
+      "EVERLASTING HAPPiNESS"
+     ],
+     "cum": [
+      2634,
+      4846,
+      7182,
+      9784
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 5th",
+     "songs": [
+      "Bring Our Ignition Back",
+      "Unsan-musho",
+      "Electric Angel",
+      "Kegare Naki Bara Juuji"
+     ],
+     "cum": [
+      2734,
+      5151,
+      8240,
+      11214
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 6th",
+     "songs": [
+      "Defeat awaken battle ship",
+      "Extraction",
+      "Pastel Subliminal",
+      "Synthesized Fortress"
+     ],
+     "cum": [
+      2483,
+      4759,
+      7680,
+      10874
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 7th",
+     "songs": [
+      "LiFE Garden",
+      "Alpha",
+      "Stay Alive [Zekk Remix]",
+      "Heaven's Fall"
+     ],
+     "cum": [
+      2846,
+      5106,
+      7439,
+      10786
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 8th",
+     "songs": [
+      "Hayabusa",
+      "Shuu no Hazama",
+      "Amatsukami",
+      "CRIMSON FIGHTER"
+     ],
+     "cum": [
+      3789,
+      7452,
+      9876,
+      13131
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 9th",
+     "songs": [
+      "crazy_tek [DJ Noriken Remix]",
+      "Nhelv",
+      "Shuuten",
+      "Deadly force - Put an end"
+     ],
+     "cum": [
+      3888,
+      6918,
+      10499,
+      14199
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra Final",
+     "songs": [
+      "Infinity Heaven",
+      "NEURO-CLOUD-9",
+      "Kizuato",
+      "Runengon"
+     ],
+     "cum": [
+      2828,
+      6190,
+      9583,
+      14683
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "course": "Malody段位 v2",
+   "levels": [
+    {
+     "level": "Regular 1st",
+     "songs": [
+      "Glitch Nerds",
+      "Borealis",
+      "Niflheimr",
+      "Moon"
+     ],
+     "cum": [
+      831,
+      1786,
+      2693,
+      3347
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 2nd",
+     "songs": [
+      "Follow Tomorrow",
+      "Bronze Coffin",
+      "Keigan no Zettaireido",
+      "Sakura Mirage"
+     ],
+     "cum": [
+      1152,
+      2002,
+      2952,
+      3921
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 3rd",
+     "songs": [
+      "Quon",
+      "Genkyoku o Kirikizamu",
+      "Gin no Kaze",
+      "Adjudicatorz-Danzai-"
+     ],
+     "cum": [
+      1169,
+      2312,
+      3286,
+      4632
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 4th",
+     "songs": [
+      "Tenkuu no Yoake",
+      "VALLISTA",
+      "Crystal World ~Fracture~",
+      "Zenithalize"
+     ],
+     "cum": [
+      1416,
+      2818,
+      4503,
+      6102
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 5th",
+     "songs": [
+      "Ten Thousand Tons",
+      "Chips of Notes",
+      "Despair of ELFERIA",
+      "Chronostasi"
+     ],
+     "cum": [
+      1953,
+      3331,
+      5497,
+      7164
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 6th",
+     "songs": [
+      "Sweet Cherry X",
+      "Akasagarbha",
+      "HELLO EveryOne",
+      "DataError"
+     ],
+     "cum": [
+      1487,
+      2911,
+      4292,
+      5879
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 7th",
+     "songs": [
+      "Fairy Stage",
+      "Xross Infection",
+      "Wave",
+      "Blue Zenith"
+     ],
+     "cum": [
+      1909,
+      3723,
+      5500,
+      8181
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 8th",
+     "songs": [
+      "The Lost Dedicated",
+      "The Party We Have Never Seen",
+      "Finixe",
+      "Ultimate Dream"
+     ],
+     "cum": [
+      1962,
+      3029,
+      5417,
+      7189
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 9th",
+     "songs": [
+      "Dusk",
+      "Panic Popn Picnic",
+      "Kick-ass Kung-Fu Carnival",
+      "Yakusoku no kimi"
+     ],
+     "cum": [
+      1799,
+      3822,
+      6103,
+      7890
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 10th",
+     "songs": [
+      "Chaser",
+      "Loli Fantasy",
+      "Daydream",
+      "Moon Gate"
+     ],
+     "cum": [
+      2606,
+      4794,
+      6988,
+      9175
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 1st",
+     "songs": [
+      "Border od Life",
+      "Scorpion Dance",
+      "The Island of Albatross",
+      "Beautiful Loli Thing"
+     ],
+     "cum": [
+      2164,
+      4116,
+      5937,
+      9186
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 2nd",
+     "songs": [
+      "Kitsune no Yomeiri",
+      "Zi Yang Hua -AZISAI-",
+      "Love & Justice",
+      "Message"
+     ],
+     "cum": [
+      2871,
+      4895,
+      6766,
+      9218
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 3rd",
+     "songs": [
+      "Jumble Rumble",
+      "End Time",
+      "++",
+      "Crow Solace"
+     ],
+     "cum": [
+      2327,
+      3920,
+      6086,
+      8286
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 4th",
+     "songs": [
+      "EDM Jumpers",
+      "[line-epsilon]",
+      "Contrapasso-paradise-",
+      "YELL!"
+     ],
+     "cum": [
+      2731,
+      5384,
+      7417,
+      10213
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 5th",
+     "songs": [
+      "Satori de Pon!",
+      "Legend of Seeker",
+      "Crystal World -Fracture-",
+      "Wizdomiot"
+     ],
+     "cum": [
+      3229,
+      5960,
+      8521,
+      10630
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 6th",
+     "songs": [
+      "Sepia",
+      "Nopea",
+      "Satori Trisis",
+      "Death"
+     ],
+     "cum": [
+      1766,
+      3627,
+      6798,
+      8477
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 7th",
+     "songs": [
+      "Paranoia",
+      "Boulafacet",
+      "Paraclete -Miracle-",
+      "Yumemi no Shonen"
+     ],
+     "cum": [
+      2339,
+      4800,
+      7311,
+      9488
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 8th",
+     "songs": [
+      "Martail Arts",
+      "Gene Disrupition",
+      "Paradigm Shift[D-CSC]",
+      "Death Malody"
+     ],
+     "cum": [
+      1929,
+      4309,
+      7124,
+      11799
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra 9th",
+     "songs": [
+      "Fragmentation",
+      "Nostos2021",
+      "Green-eyed Jealousy",
+      "SILENT DESERT"
+     ],
+     "cum": [
+      3987,
+      5861,
+      10224,
+      14067
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Extra Final",
+     "songs": [
+      "Only my railgun",
+      "-purgatorium-",
+      "Blue Zenith",
+      "Inner Universe"
+     ],
+     "cum": [
+      3468,
+      6803,
+      10501,
+      15562
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "course": "LN段位(underjoy)",
+   "levels": [
+    {
+     "level": "LN 1st",
+     "songs": [
+      "Hitorigoto -TV MIX-",
+      "Dango Daikazoku",
+      "Nerevar Rising",
+      "TRICKL4SH 220"
+     ],
+     "cum": [
+      893,
+      1420,
+      1702,
+      2722
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 2nd",
+     "songs": [
+      "Doki Doki Literature Club!",
+      "SPF 420",
+      "HeartBeats",
+      "RockHill"
+     ],
+     "cum": [
+      1184,
+      2598,
+      3303,
+      4913
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 3rd",
+     "songs": [
+      "Aura",
+      "Aura",
+      "Aura",
+      "OverDrivers"
+     ],
+     "cum": [
+      1305,
+      2647,
+      3527,
+      5222
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 4th",
+     "songs": [
+      "Otenba Koimusume",
+      "GEE",
+      "Future Gazer",
+      "#FairyJoke #SDVX_Edit"
+     ],
+     "cum": [
+      1469,
+      3074,
+      3855,
+      5988
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 5th",
+     "songs": [
+      "Pink Gold",
+      "Milk",
+      "Promise",
+      "Blacksphere [Exhaust effect]"
+     ],
+     "cum": [
+      2956,
+      4569,
+      6482,
+      8363
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 6th",
+     "songs": [
+      "Koborezu no Negaigoto",
+      "Power to Progress",
+      "Mousou Express",
+      "Berry Go!!"
+     ],
+     "cum": [
+      2324,
+      3736,
+      5627,
+      8048
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 7th",
+     "songs": [
+      "Rock It",
+      "On The FM",
+      "<3",
+      "Tsumibito"
+     ],
+     "cum": [
+      2076,
+      4047,
+      5711,
+      8097
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 8th",
+     "songs": [
+      "Missing Banquet",
+      "Shotgun Senorita",
+      "Sakase Natsuzora, Koi no Hana",
+      "Owari to Hajimari no Oto"
+     ],
+     "cum": [
+      2694,
+      5118,
+      7604,
+      10164
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 9th",
+     "songs": [
+      "DOgger's Gadget [Unmixed]",
+      "Raijin no Hidariude",
+      "Cold Planet",
+      "Ordinary World"
+     ],
+     "cum": [
+      4069,
+      6662,
+      9087,
+      12786
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 10th",
+     "songs": [
+      "Towa no Maigo",
+      "Dopamine",
+      "Sakura Trip",
+      "Element of SPADA"
+     ],
+     "cum": [
+      3925,
+      7045,
+      10411,
+      14066
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 11th Yoake",
+     "songs": [
+      "Enigma",
+      "Avalon no Oka",
+      "Love is War",
+      "Asphixia"
+     ],
+     "cum": [
+      3507,
+      6019,
+      10449,
+      14974
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 12th Yuugure",
+     "songs": [
+      "Carnarion [CK Remix]",
+      "No. 6",
+      "Endymion",
+      "Infinite Synthesis"
+     ],
+     "cum": [
+      2986,
+      7797,
+      11349,
+      15739
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 13th Yoru",
+     "songs": [
+      "Kyouki Ranmai",
+      "Intersect Thunderbolt - Remix",
+      "Literal Crystal In The Cyphisonia",
+      "NEURO-CLOUD-9"
+     ],
+     "cum": [
+      4725,
+      8928,
+      12579,
+      17640
+     ],
+     "acc": [
+      97.44,
+      97.98,
+      97.46,
+      97.14
+     ]
+    },
+    {
+     "level": "LN 14th Yami",
+     "songs": [
+      "Mare Nectaris",
+      "Nhelv",
+      "Indomitable Spirit",
+      "The Lost"
+     ],
+     "cum": [
+      4415,
+      8735,
+      13053,
+      17000
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 15th Yume",
+     "songs": [
+      "Kodoku no Kakurenbo",
+      "Inaiinai Isonshou",
+      "White Hair Little Swords Girl",
+      "Nuclear-Star"
+     ],
+     "cum": [
+      6153,
+      11814,
+      17718,
+      23681
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 16th Yokaze",
+     "songs": [
+      "Protoflicker",
+      "Cinderella Cage -Trancecore Mix-",
+      "Lancelot ~Flame of the Rebellion~",
+      "R U Still xxxx?"
+     ],
+     "cum": [
+      5052,
+      8027,
+      11617,
+      18217
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  }
+ ],
+ "6k": [
+  {
+   "course": "6k Regular段位(Arkman)",
+   "levels": [
+    {
+     "level": "Start",
+     "songs": [
+      "Medicine of love",
+      "Quo Vadis",
+      "Mr.Magic",
+      "Junbi Undou"
+     ],
+     "cum": [
+      1185,
+      2768,
+      4057,
+      5356
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 1st",
+     "songs": [
+      "Twinkle Wonderland",
+      "Invitation II",
+      "fairy stage",
+      "GOODTEK"
+     ],
+     "cum": [
+      1520,
+      3225,
+      4820,
+      6205
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 2nd",
+     "songs": [
+      "waxing and wanding",
+      "Joyeuse",
+      "Life Will Change",
+      "RegreT of MemoRy"
+     ],
+     "cum": [
+      1677,
+      3073,
+      4893,
+      6527
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 3rd",
+     "songs": [
+      "Highscore",
+      "SpaceLand TOYBOX",
+      "sinus",
+      "Reimei Sketchbook"
+     ],
+     "cum": [
+      1982,
+      3678,
+      5768,
+      7358
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 4th",
+     "songs": [
+      "Clotho and the stargazer",
+      "Kanagawa Cyber Culvert",
+      "Broken",
+      "++"
+     ],
+     "cum": [
+      2251,
+      4610,
+      6926,
+      8928
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 5th",
+     "songs": [
+      "Tori no Uta",
+      "The Lady is a Trump",
+      "Paradission",
+      "Amnehilesie"
+     ],
+     "cum": [
+      2334,
+      4650,
+      6846,
+      9255
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 6th",
+     "songs": [
+      "Milk Crown on Sonnetica",
+      "Danbo",
+      "Hard Renaissamba",
+      "Contrapasso -paradiso-"
+     ],
+     "cum": [
+      2751,
+      5131,
+      8082,
+      10135
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 7th",
+     "songs": [
+      "fffff op.2",
+      "Mizu Aomu",
+      "Lazurite",
+      "Airengokuka"
+     ],
+     "cum": [
+      2614,
+      4734,
+      7486,
+      10268
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 8th",
+     "songs": [
+      "WHIRLWIND",
+      "Futari no Haijou Yuutouen",
+      "Ultimate Weapon",
+      "SEITEN NO TERIYAKI"
+     ],
+     "cum": [
+      2683,
+      5132,
+      8133,
+      10185
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 9th",
+     "songs": [
+      "LIGHTFALL",
+      "Awakening",
+      "Disorder",
+      "Torikago no Serenade"
+     ],
+     "cum": [
+      2958,
+      5365,
+      8145,
+      11120
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "course": "6k LN段位([Crz]sunnyxxy)",
+   "levels": [
+    {
+     "level": "LN 0th",
+     "songs": [
+      "Tsuki Akari",
+      "Beautiful Soldier (TV-Size)",
+      "aLIEz (TV-Size)",
+      "Scarborough Fair"
+     ],
+     "cum": [
+      475,
+      1107,
+      1537,
+      2164
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 1st",
+     "songs": [
+      "White Princess",
+      "Good job!",
+      "Onigami",
+      "Reimu-instrumental-"
+     ],
+     "cum": [
+      1438,
+      2346,
+      2743,
+      3391
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 2nd",
+     "songs": [
+      "Luminous Sword",
+      "CANDY MAGIC",
+      "Empyrean",
+      "For Fruits Basket"
+     ],
+     "cum": [
+      1193,
+      2066,
+      2453,
+      3168
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 3rd",
+     "songs": [
+      "Nine Point Eight",
+      "Eclipse Parade",
+      "Protoflicker",
+      "Loadstar"
+     ],
+     "cum": [
+      1671,
+      3660,
+      4186,
+      5275
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 4th",
+     "songs": [
+      "future gazer (TV Size)",
+      "Hunny Bunny",
+      "Vajra",
+      "PRAGMATISM"
+     ],
+     "cum": [
+      1369,
+      3060,
+      3439,
+      4699
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 5th",
+     "songs": [
+      "Voice of Passion",
+      "Akination",
+      "Fable",
+      "Yoiyami Hanabi"
+     ],
+     "cum": [
+      1885,
+      3750,
+      4530,
+      6477
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 6th",
+     "songs": [
+      "Dear Another Nova",
+      "Knight of Firmament",
+      "Bravely You (TV Size)",
+      "Shoujo Kisou Kyoku ~ Dream Battle"
+     ],
+     "cum": [
+      2147,
+      4154,
+      5017,
+      6487
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 7th",
+     "songs": [
+      "BLACK or WHITE?",
+      "Kono Yo no Hate de Koi wo Utau Shoujo YU-NO",
+      "Saramandora no Odoriko",
+      "PAPERMOON (TV Size)"
+     ],
+     "cum": [
+      1730,
+      3213,
+      5010,
+      6534
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 8th",
+     "songs": [
+      "Beat in Angel",
+      "Snow Storm -Euphoria-",
+      "Act Beloved",
+      "bullet (TV Size)"
+     ],
+     "cum": [
+      1960,
+      4299,
+      6545,
+      8040
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 9th",
+     "songs": [
+      "Sink into Nightmare",
+      "Heart of Witch",
+      "Altale",
+      "Raijin no Hidariude"
+     ],
+     "cum": [
+      2125,
+      4108,
+      5546,
+      7209
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 10th",
+     "songs": [
+      "Say A Vengeance",
+      "Plastic Mind",
+      "Identity Part 5",
+      "The Clockwork Rose -Tokei Shikake no Bara Shoujo-"
+     ],
+     "cum": [
+      2432,
+      5694,
+      8046,
+      10249
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 11th",
+     "songs": [
+      "squartatrice",
+      "Black Lotus",
+      "ouroboros -twin stroke of the end-",
+      "Kanagawa Cyber Culvert"
+     ],
+     "cum": [
+      2819,
+      5560,
+      8411,
+      10800
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 12th",
+     "songs": [
+      "LivedaM",
+      "Hesperides",
+      "Inherited World",
+      "GEOMETRIA"
+     ],
+     "cum": [
+      2394,
+      5336,
+      7468,
+      9617
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 13th",
+     "songs": [
+      "Nibelungen",
+      "Rubeus",
+      "* Crow Solace *",
+      "Invincible"
+     ],
+     "cum": [
+      3419,
+      6168,
+      8782,
+      11566
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 14th",
+     "songs": [
+      "Exitium",
+      "HAVOX",
+      "Xronier",
+      "Ketsarku Mozgalom"
+     ],
+     "cum": [
+      3844,
+      7322,
+      10453,
+      13347
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  }
+ ],
+ "7k": [
+  {
+   "course": "7k Regular段位",
+   "levels": [
+    {
+     "level": "Regular 0th",
+     "songs": [
+      "anemone",
+      "Who You Evidently Thought Was Me",
+      "End Time",
+      "Yuki wa Doko ni? Kimi no Mune ni!"
+     ],
+     "cum": [
+      1018,
+      1869,
+      2892,
+      4115
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 1st",
+     "songs": [
+      "dir",
+      ".357 Magnum",
+      "Aragami",
+      "Tsuki -Yue-"
+     ],
+     "cum": [
+      1436,
+      3250,
+      4562,
+      6235
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 2nd",
+     "songs": [
+      "East West Wobble",
+      "Schur's Theorem",
+      "Hesperides",
+      "Gyspy Tronic"
+     ],
+     "cum": [
+      1411,
+      2847,
+      4646,
+      6800
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 3rd",
+     "songs": [
+      "Haryu",
+      "Electro Peaceful",
+      "Altale",
+      "CHEVRON"
+     ],
+     "cum": [
+      1970,
+      3876,
+      5747,
+      7729
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 4th",
+     "songs": [
+      "MEGALOVANIA",
+      "My Son, the Leopard",
+      "ETERNAL DRAIN",
+      "electro peaceful (8bit)"
+     ],
+     "cum": [
+      2189,
+      4042,
+      6150,
+      8414
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 5th",
+     "songs": [
+      "AciculignosA",
+      "Passage D",
+      "Speed of Link",
+      "Blue Planet"
+     ],
+     "cum": [
+      2087,
+      4254,
+      6229,
+      8620
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 6th",
+     "songs": [
+      "Gabberse Town",
+      "Isometry",
+      "44river",
+      "Imperishable Night 2006"
+     ],
+     "cum": [
+      1576,
+      4394,
+      6762,
+      9765
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 7th",
+     "songs": [
+      "Sudden Romance",
+      "Rengoku -Purgatorium-",
+      "Witches Brew",
+      "Out Of The Blue"
+     ],
+     "cum": [
+      2689,
+      5565,
+      7503,
+      10350
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 8th",
+     "songs": [
+      "Overworld",
+      "Bangin' Burst",
+      "Yozakura",
+      "Tiny Tales Continue"
+     ],
+     "cum": [
+      2366,
+      4874,
+      7699,
+      10635
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 9th",
+     "songs": [
+      "gazer",
+      "Ubiquity",
+      "Mario Paint",
+      "The Solace of Oblivion"
+     ],
+     "cum": [
+      2420,
+      5092,
+      7322,
+      10769
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular 10th",
+     "songs": [
+      "SAMBA LAND",
+      "Toki (maidable Remix)",
+      "Blue-White Crazystars",
+      "Fox4-Raize-"
+     ],
+     "cum": [
+      3081,
+      5447,
+      7958,
+      11396
+     ],
+     "acc": [
+      97.66,
+      96.33,
+      95.47,
+      94.76
+     ]
+    },
+    {
+     "level": "Regular Gamma",
+     "songs": [
+      "Identity Part 4",
+      "EGOISM 440",
+      "Vertex GAMMA",
+      "Paraclete"
+     ],
+     "cum": [
+      3085,
+      5585,
+      8292,
+      12003
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular Azumuth",
+     "songs": [
+      "TENSHI (True Final Boss)",
+      "najimi breakers",
+      "Nijuu",
+      "Finixe"
+     ],
+     "cum": [
+      3644,
+      6818,
+      10078,
+      14219
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular Zenith",
+     "songs": [
+      "Icicle Stinger",
+      "Rinjuu",
+      "Der Wald",
+      "We Want To Run"
+     ],
+     "cum": [
+      3624,
+      6346,
+      9604,
+      14578
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "Regular Stellium",
+     "songs": [
+      "EXILE",
+      "Wanderflux",
+      "P8107",
+      "Triumphal Return"
+     ],
+     "cum": [
+      4000,
+      8502,
+      11816,
+      16384
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "course": "7k LN段位",
+   "levels": [
+    {
+     "level": "LN 0th",
+     "songs": [
+      "Crayon Tulip",
+      "lit(var)",
+      "Reimu-instrumental-",
+      "if Hitori Omou"
+     ],
+     "cum": [
+      820,
+      1420,
+      1635,
+      1882
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 1st",
+     "songs": [
+      "Mawaru Sora Usagi",
+      "The First Layer",
+      "Portamento",
+      "Dango Daikazoku Mix Piano"
+     ],
+     "cum": [
+      1068,
+      1750,
+      2287,
+      2715
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 2nd",
+     "songs": [
+      "Mr. Darling",
+      "Take It to the Limit",
+      "Yumeoi",
+      "HARAJUKU IYAHOI"
+     ],
+     "cum": [
+      1242,
+      2440,
+      3200,
+      4421
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 3rd",
+     "songs": [
+      "athletic meet of sound toy",
+      "Panic Holic",
+      "XROSS INFECTION",
+      "12:30"
+     ],
+     "cum": [
+      1512,
+      2862,
+      3185,
+      4084
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 4th",
+     "songs": [
+      "Doku Ryuu no Kobura",
+      "The Limbo",
+      "Be Happy*",
+      "Main Theme"
+     ],
+     "cum": [
+      1309,
+      2827,
+      3370,
+      4106
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 5th",
+     "songs": [
+      "Chocolate Disco",
+      "Oath Nova Apocalypse",
+      "SAVIOR OF SONG",
+      "inside"
+     ],
+     "cum": [
+      1516,
+      4211,
+      4813,
+      5431
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 6th",
+     "songs": [
+      "Lune",
+      "'Trockne Blumen'",
+      "Chiisana Boukensha",
+      "in flight (zygani Remix)"
+     ],
+     "cum": [
+      1635,
+      3537,
+      4293,
+      5374
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 7th",
+     "songs": [
+      "YES or YES",
+      "Towards the Horizon",
+      "brave heart",
+      "Rockhill"
+     ],
+     "cum": [
+      1796,
+      3889,
+      5248,
+      6639
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 8th",
+     "songs": [
+      "Imprinting",
+      "Sailing Force",
+      "Heart",
+      "Romancing Layer"
+     ],
+     "cum": [
+      2230,
+      4366,
+      5831,
+      7193
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN 9th",
+     "songs": [
+      "New Gravity",
+      "Enigma",
+      "Hustle Beat!!",
+      "Onigami"
+     ],
+     "cum": [
+      1900,
+      4059,
+      5656,
+      7333
+     ],
+     "acc": [
+      96.34,
+      95.62,
+      94.77,
+      94.93
+     ]
+    },
+    {
+     "level": "LN 10th",
+     "songs": [
+      "SpaceLand TOYBOX",
+      "CODE -CRiMSON-",
+      "attack in the minor key",
+      "Internet bitch P*Light Remix"
+     ],
+     "cum": [
+      2151,
+      4647,
+      6492,
+      8200
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN Gamma",
+     "songs": [
+      "quaver",
+      "Hellfire",
+      "Pure Ruby",
+      "Schrodinger no neko"
+     ],
+     "cum": [
+      2551,
+      4877,
+      7150,
+      9315
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN Azimuth",
+     "songs": [
+      "JOMANDA",
+      "Big Brother",
+      "licca",
+      "Zettai Reido"
+     ],
+     "cum": [
+      3029,
+      5501,
+      8054,
+      10980
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN Zenith",
+     "songs": [
+      "Redshift",
+      "Dement ~After Legend~",
+      "Black Lotus",
+      "Alexandrite"
+     ],
+     "cum": [
+      3240,
+      6265,
+      9446,
+      12350
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "level": "LN Stellium",
+     "songs": [
+      "Decoy",
+      "Unleashed World",
+      "Nibelungen",
+      "Lancelot ~Flame of the Rebellion~"
+     ],
+     "cum": [
+      4073,
+      7527,
+      10723,
+      14444
+     ],
+     "acc": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  }
+ ]
+}
