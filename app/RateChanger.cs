@@ -33,8 +33,8 @@ public static class RateChanger
     public static void Generate(string inputOsz, double speed, string outputOsz, Action<string>? log = null)
     {
         speed = Math.Round(speed, 2, MidpointRounding.AwayFromZero);
-        if (speed < 1.0 - 0.0001 || speed > 2.0 + 0.0001)
-            throw new ArgumentException("倍速必须在 1.00 ~ 2.00 之间");
+        if (speed < 0.5 - 0.0001 || speed > 2.0 + 0.0001)
+            throw new ArgumentException("倍速必须在 0.50 ~ 2.00 之间");
         if (!File.Exists(inputOsz))
             throw new FileNotFoundException("找不到输入文件: " + inputOsz);
         if (string.IsNullOrWhiteSpace(outputOsz))
@@ -131,7 +131,7 @@ public static class RateChanger
                 if (section == "[Metadata]")
                 {
                     if (!sawBeatmapSetId) sb.AppendLine("BeatmapSetID:-1");
-                    if (!sawBeatmapId) sb.AppendLine("BeatmapID:-1");
+                    if (!sawBeatmapId) sb.AppendLine("BeatmapID:0");
                 }
                 section = trimmed;
                 sb.AppendLine(line);
@@ -157,7 +157,8 @@ public static class RateChanger
             {
                 if (line.StartsWith("BeatmapID:", StringComparison.OrdinalIgnoreCase))
                 {
-                    sb.AppendLine("BeatmapID:-1");
+                    // 惯例：未提交的本地谱面 BeatmapID 为 0（而非 -1）
+                    sb.AppendLine("BeatmapID:0");
                     sawBeatmapId = true;
                     continue;
                 }
@@ -171,6 +172,17 @@ public static class RateChanger
                 {
                     // 难度名追加倍速后缀：即使与原始谱面合并进同一谱面集，也不会顶替原难度
                     sb.AppendLine("Version:" + line[8..].TrimEnd() + $" ({r:0.00}x)");
+                    continue;
+                }
+                if (line.StartsWith("Title:", StringComparison.OrdinalIgnoreCase))
+                {
+                    // 标题追加倍速后缀，让 osu 在界面上明确区分变速版与原谱面
+                    sb.AppendLine("Title:" + line[6..].TrimEnd() + $" ({r:0.00}x)");
+                    continue;
+                }
+                if (line.StartsWith("TitleUnicode:", StringComparison.OrdinalIgnoreCase))
+                {
+                    sb.AppendLine("TitleUnicode:" + line[13..].TrimEnd() + $" ({r:0.00}x)");
                     continue;
                 }
             }
@@ -257,7 +269,7 @@ public static class RateChanger
         if (section == "[Metadata]")
         {
             if (!sawBeatmapSetId) sb.AppendLine("BeatmapSetID:-1");
-            if (!sawBeatmapId) sb.AppendLine("BeatmapID:-1");
+            if (!sawBeatmapId) sb.AppendLine("BeatmapID:0");
         }
 
         byte[] output = utf8Bom ? new UTF8Encoding(true).GetBytes(sb.ToString())

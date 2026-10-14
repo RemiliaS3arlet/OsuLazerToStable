@@ -1,69 +1,34 @@
 using Realms;
 
-// 探针：验证 Realm 打开时的属性级严格性，以及最小类集合能否读取。
-// PROBE_STRICT 编译开关：仅声明部分属性的 BeatmapCollection
-string path = @"C:\Users\somer\AppData\Roaming\osu\client.realm";
+// 探针：按文件名过滤列出谱面集（用于检查导入后的落库情况）
+string path = args.Length > 0 && !args[0].StartsWith("--") ? args[0] : @"C:\Users\somer\AppData\Roaming\osu\client.realm";
+string filter = args.Length > 1 ? args[1] : "";
+
 var config = new RealmConfiguration(path) { IsReadOnly = true, SchemaVersion = 52 };
 
-#if PROBE_STRICT
-using (var r = Realm.GetInstance(config))
+using var r = Realm.GetInstance(config);
+Console.WriteLine($"opened OK, searching '{filter}'");
+int matched = 0;
+foreach (var s in r.All<BeatmapSetInfo>())
 {
-    Console.WriteLine("strict: opened OK (missing-props tolerated!)");
-    foreach (var c in r.All<BeatmapCollectionPartial>())
-        Console.WriteLine("  col: " + c.Name);
-}
-#else
-using (var r = Realm.GetInstance(config))
-{
-    Console.WriteLine("min: opened OK");
-    Console.WriteLine("schema classes visible: " + r.Schema.Count);
-    foreach (var os in r.Schema) Console.WriteLine("  " + os.Name);
-    var cols = r.All<BeatmapCollection>();
-    Console.WriteLine("collections: " + cols.Count());
-    int cc = 0;
-    foreach (var c in cols)
+    bool hit = false;
+    foreach (var f in s.Files)
     {
-        Console.WriteLine($"  col '{c.Name}' maps={c.BeatmapMD5Hashes.Count}");
-        if (++cc >= 8) break;
-    }
-    var sets = r.All<BeatmapSetInfo>();
-    Console.WriteLine("sets: " + sets.Count());
-    int sc = 0;
-    foreach (var s in sets)
-    {
-        Console.WriteLine($"  set id={s.OnlineID} hash={s.Hash} del={s.DeletePending} files={s.Files.Count}");
-        int fc = 0;
-        foreach (var f in s.Files)
+        if (filter.Length == 0 || (f.Filename ?? "").Contains(filter, StringComparison.OrdinalIgnoreCase))
         {
-            Console.WriteLine($"      file '{f.Filename}' -> {f.File.Hash}");
-            if (++fc >= 2) break;
+            hit = true;
+            break;
         }
-        if (++sc >= 3) break;
     }
+    if (!hit) continue;
+    matched++;
+    Console.WriteLine($"set onlineId={s.OnlineID} hash={s.Hash} del={s.DeletePending} files={s.Files.Count}");
+    foreach (var f in s.Files)
+        Console.WriteLine($"    {f.Filename} -> {f.File.Hash}");
 }
-#endif
+Console.WriteLine($"matched sets: {matched}");
 
-// ---------- 类声明 ----------
-
-#if PROBE_STRICT
-[MapTo("BeatmapCollection")]
-public class BeatmapCollectionPartial : RealmObject
-{
-    public string Name { get; set; } = string.Empty;
-}
-#else
-public class BeatmapCollection : RealmObject
-{
-    [PrimaryKey]
-    public Guid ID { get; set; }
-
-    public string Name { get; set; } = string.Empty;
-
-    public IList<string> BeatmapMD5Hashes { get; } = null!;
-
-    public DateTimeOffset LastModified { get; set; }
-}
-
+// ---------- 最小模型声明（与 app/RealmModels.cs 一致） ----------
 [MapTo("BeatmapSet")]
 public class BeatmapSetInfo : RealmObject
 {
@@ -93,9 +58,9 @@ public class BeatmapSetInfo : RealmObject
 
 public class RealmNamedFileUsage : EmbeddedObject
 {
-    public string Filename { get; set; } = string.Empty;
-
     public RealmFile File { get; set; } = null!;
+
+    public string Filename { get; set; } = string.Empty;
 }
 
 [MapTo("File")]
@@ -107,4 +72,3 @@ public class RealmFile : RealmObject
     [Backlink(nameof(RealmNamedFileUsage.File))]
     public IQueryable<RealmNamedFileUsage> Usages { get; } = null!;
 }
-#endif

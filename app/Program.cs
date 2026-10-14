@@ -95,9 +95,11 @@ internal static class CliRunner
     {
         double speed = double.Parse(GetArg(args, "--speed") ?? "1.25", CultureInfo.InvariantCulture);
         string? outArg = GetArg(args, "--out");
+        string baseName = System.Text.RegularExpressions.Regex.Replace(
+            Path.GetFileNameWithoutExtension(input), @"^\d+\s+", "");
         string output = outArg ?? Path.Combine(
             Path.GetDirectoryName(Path.GetFullPath(input))!,
-            $"({speed:0.00}) {Path.GetFileNameWithoutExtension(input)}.osz");
+            $"({speed:0.00}) {baseName}.osz");
 
         Console.WriteLine($"输入: {input}");
         Console.WriteLine($"倍速: {speed:0.00}x");

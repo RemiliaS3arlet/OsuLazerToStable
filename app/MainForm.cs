@@ -210,7 +210,7 @@ public class MainForm : Form
         speedRow.Controls.Add(new Label { Text = "倍速:", AutoSize = true, Margin = new Padding(0, 4, 6, 0) });
         _rateSpeed = new NumericUpDown
         {
-            Minimum = 1.00m,
+            Minimum = 0.50m,
             Maximum = 2.00m,
             DecimalPlaces = 2,
             Increment = 0.05m,
@@ -218,7 +218,7 @@ public class MainForm : Form
             Width = 90,
         };
         speedRow.Controls.Add(_rateSpeed);
-        speedRow.Controls.Add(new Label { Text = "×（范围 1.00 ~ 2.00，精确到 0.01）", AutoSize = true, Margin = new Padding(6, 4, 0, 0) });
+        speedRow.Controls.Add(new Label { Text = "×（范围 0.50 ~ 2.00，精确到 0.01）", AutoSize = true, Margin = new Padding(6, 4, 0, 0) });
         _btnGenerate = new Button { Text = "生成变速谱面", AutoSize = true, Height = 34, Margin = new Padding(16, 0, 0, 0) };
         _btnOpenFolder = new Button { Text = "打开所在文件夹", AutoSize = true, Height = 34, Enabled = false, Margin = new Padding(10, 0, 0, 0) };
         speedRow.Controls.Add(_btnGenerate);
@@ -244,7 +244,8 @@ public class MainForm : Form
 
         var help = new Label
         {
-            Text = "说明：变速会把音频与谱面节奏整体加快（1.00x ~ 2.00x），生成的新文件以 (1.XX) 为前缀另存，不影响原谱面。\r\n" +
+            Text = "说明：变速会把音频与谱面节奏整体改变（0.50x ~ 2.00x），生成的新文件以 (0.XX) 为前缀另存，不影响原谱面。\r\n" +
+                   "生成的谱面会被标记为全新本地谱面（ID 清零、标题与难度名带倍速后缀），导入 stable / lazer 不会覆盖原谱面、不会提示更新。\r\n" +
                    "音频变速需要 ffmpeg.exe：请将其放到本程序同目录（或加入系统 PATH），否则无法生成正确的变速谱面。",
             Dock = DockStyle.Fill,
             ForeColor = Color.DimGray,
@@ -293,14 +294,17 @@ public class MainForm : Form
         }
 
         double speed = (double)_rateSpeed.Value;
-        if (speed < 1.0 || speed > 2.0)
+        if (speed < 0.5 || speed > 2.0)
         {
-            MessageBox.Show(this, "倍速必须在 1.00 ~ 2.00 之间。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, "倍速必须在 0.50 ~ 2.00 之间。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
         string prefix = $"({speed:0.00})";
-        string defaultName = $"{prefix} {Path.GetFileNameWithoutExtension(_rateInput)}.osz";
+        // 去掉原文件名开头的谱面集 ID（如 "2606612 "），避免 stable 用文件名建目录时与原谱面混淆
+        string baseName = System.Text.RegularExpressions.Regex.Replace(
+            Path.GetFileNameWithoutExtension(_rateInput), @"^\d+\s+", "");
+        string defaultName = $"{prefix} {baseName}.osz";
         using var sfd = new SaveFileDialog
         {
             Filter = "osu! 谱面包 (*.osz)|*.osz",
