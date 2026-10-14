@@ -179,7 +179,7 @@ public class MainForm : Form
         };
         var dropLabel = new Label
         {
-            Text = "把 .osz 谱面文件拖到这里\n（或点击选择文件）",
+            Text = "把 .osz / .osu 谱面文件拖到这里\n（或点击选择文件）",
             Dock = DockStyle.Fill,
             TextAlign = ContentAlignment.MiddleCenter,
             Font = new Font("Microsoft YaHei UI", 11F),
@@ -190,13 +190,17 @@ public class MainForm : Form
         _dropPanel.DragEnter += (_, e) =>
         {
             if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true
-                && ((string[])e.Data.GetData(DataFormats.FileDrop)!).Any(f => f.EndsWith(".osz", StringComparison.OrdinalIgnoreCase)))
+                && ((string[])e.Data.GetData(DataFormats.FileDrop)!).Any(f =>
+                    f.EndsWith(".osz", StringComparison.OrdinalIgnoreCase) ||
+                    f.EndsWith(".osu", StringComparison.OrdinalIgnoreCase)))
                 e.Effect = DragDropEffects.Copy;
         };
         _dropPanel.DragDrop += (_, e) =>
         {
             var files = (string[])e.Data!.GetData(DataFormats.FileDrop)!;
-            string? osz = files.FirstOrDefault(f => f.EndsWith(".osz", StringComparison.OrdinalIgnoreCase));
+            string? osz = files.FirstOrDefault(f =>
+                f.EndsWith(".osz", StringComparison.OrdinalIgnoreCase) ||
+                f.EndsWith(".osu", StringComparison.OrdinalIgnoreCase));
             if (osz != null) SetRateInput(osz);
         };
         panel.Controls.Add(_dropPanel, 0, 0);
@@ -245,7 +249,9 @@ public class MainForm : Form
         var help = new Label
         {
             Text = "说明：变速会把音频与谱面节奏整体改变（0.50x ~ 2.00x），生成的新文件以 (0.XX) 为前缀另存，不影响原谱面。\r\n" +
-                   "生成的谱面会被标记为全新本地谱面（ID 清零、标题与难度名带倍速后缀），导入 stable / lazer 不会覆盖原谱面、不会提示更新。\r\n" +
+                   "支持拖入 .osz 或单个 .osu 文件（.osu 会自动附带同目录下的音频与背景图）。\r\n" +
+                   "生成的谱面会被标记为全新本地谱面：ID 清零、标题/难度名带倍速后缀、清空 Source、Tags 末尾随机加一个字母——" +
+                   "导入 stable / lazer 不会覆盖原谱面、不会提示更新。\r\n" +
                    "音频变速需要 ffmpeg.exe：请将其放到本程序同目录（或加入系统 PATH），否则无法生成正确的变速谱面。",
             Dock = DockStyle.Fill,
             ForeColor = Color.DimGray,
@@ -261,8 +267,8 @@ public class MainForm : Form
     {
         using var dlg = new OpenFileDialog
         {
-            Filter = "osu! 谱面包 (*.osz)|*.osz|所有文件 (*.*)|*.*",
-            Title = "选择要变速的 .osz 谱面",
+            Filter = "osu! 谱面文件 (*.osz;*.osu)|*.osz;*.osu|osu! 谱面包 (*.osz)|*.osz|osu! 谱面 (*.osu)|*.osu|所有文件 (*.*)|*.*",
+            Title = "选择要变速的 .osz / .osu 谱面",
         };
         if (dlg.ShowDialog(this) == DialogResult.OK)
             SetRateInput(dlg.FileName);

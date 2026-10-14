@@ -21,3 +21,8 @@ release-staging/
 *.zip
 *.osz
 *.mp3
+
+tools/osu-input-test/
+*.png
+*.osu
+*.mp3
