@@ -31,7 +31,7 @@ public static class RateChanger
         return string.Empty;
     }
 
-    public static void Generate(string input, double speed, string output, Action<string>? log = null)
+    public static void Generate(string input, double speed, string output, Action<string>? log = null, bool removeBackground = true)
     {
         speed = Math.Round(speed, 2, MidpointRounding.AwayFromZero);
         if (speed < 0.5 - 0.0001 || speed > 2.0 + 0.0001)
@@ -58,12 +58,20 @@ public static class RateChanger
             {
                 log?.Invoke($"读取 {Path.GetFileName(input)} …");
                 File.Copy(input, Path.Combine(workDir, Path.GetFileName(input)));
-                CopyReferencedFiles(input, workDir, log);
+                CopyReferencedFiles(input, workDir, removeBackground, log);
             }
 
             var osuFiles = Directory.GetFiles(workDir, "*.osu", SearchOption.AllDirectories).ToList();
             if (osuFiles.Count == 0)
                 throw new InvalidDataException("没有找到 .osu 谱面文件");
+
+            // 在改写 .osu 之前收集曲绘文件名（改写会删除 [Events] 中的背景引用行）
+            var bgNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (removeBackground)
+            {
+                foreach (string f in osuFiles)
+                    bgNames.UnionWith(GetBackgroundFilenames(f));
+            }
 
             // 收集所有难度引用的音频
             var audioNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -99,7 +107,37 @@ public static class RateChanger
             foreach (string f in osuFiles)
             {
                 log?.Invoke($"改写谱面节奏: {Path.GetFileName(f)}");
-                RewriteOsu(f, speed, log);
+                RewriteOsu(f, speed, removeBackground, log);
+            }
+
+            // 按新元数据重命名内部 .osu 文件名：stable 按 .osu 文件名匹配旧谱面，重命名后才能被识别为全新谱面
+            foreach (string f in osuFiles)
+            {
+                string? newName = GetOsuFileNameFromMetadata(f);
+                if (newName != null
+                    && !string.Equals(newName, Path.GetFileName(f), StringComparison.OrdinalIgnoreCase))
+                {
+                    string dest = Path.Combine(Path.GetDirectoryName(f)!, newName);
+                    if (!File.Exists(dest))
+                    {
+                        File.Move(f, dest);
+                        log?.Invoke($"重命名谱面文件: {Path.GetFileName(f)} -> {newName}");
+                    }
+                }
+            }
+
+            // 移除曲绘文件：让生成谱面与原谱面没有任何相同文件，绕过 stable 的更新检测
+            if (removeBackground)
+            {
+                foreach (string n in bgNames)
+                {
+                    string p = Path.Combine(workDir, n.Replace('/', Path.DirectorySeparatorChar));
+                    if (File.Exists(p))
+                    {
+                        File.Delete(p);
+                        log?.Invoke($"已移除曲绘: {n}");
+                    }
+                }
             }
 
             log?.Invoke("打包生成新 osz …");
@@ -116,11 +154,11 @@ public static class RateChanger
         }
     }
 
-    /// <summary>输入为单个 .osu 文件时，把其引用的音频与背景图一并复制进工作目录。</summary>
-    private static void CopyReferencedFiles(string osuPath, string workDir, Action<string>? log)
+    /// <summary>输入为单个 .osu 文件时，把其引用的音频（与背景图）复制进工作目录。</summary>
+    private static void CopyReferencedFiles(string osuPath, string workDir, bool removeBackground, Action<string>? log)
     {
         string dir = Path.GetDirectoryName(Path.GetFullPath(osuPath))!;
-        foreach (string name in GetReferencedFilenames(osuPath))
+        foreach (string name in GetReferencedFilenames(osuPath, !removeBackground))
         {
             string src = Path.Combine(dir, name.Replace('/', Path.DirectorySeparatorChar));
             if (!File.Exists(src))
@@ -135,12 +173,20 @@ public static class RateChanger
         }
     }
 
-    /// <summary>收集 .osu 引用的音频（AudioFilename）与背景图（[Events] 0,0,"..."）。</summary>
-    private static IEnumerable<string> GetReferencedFilenames(string osuPath)
+    /// <summary>收集 .osu 引用的音频（AudioFilename）与可选背景图（[Events] 0,0,"..."）。</summary>
+    private static IEnumerable<string> GetReferencedFilenames(string osuPath, bool includeBackground)
     {
         foreach (string a in GetAudioFilenames(osuPath))
             yield return a;
 
+        if (includeBackground)
+            foreach (string b in GetBackgroundFilenames(osuPath))
+                yield return b;
+    }
+
+    /// <summary>收集 [Events] 里 0,0,"..." 引用的背景图（曲绘）文件名。</summary>
+    private static IEnumerable<string> GetBackgroundFilenames(string osuPath)
+    {
         string text = File.ReadAllText(osuPath);
         bool inEvents = false;
         foreach (string raw in text.Split('\n'))
@@ -160,7 +206,7 @@ public static class RateChanger
 
     // ---------- .osu 改写 ----------
 
-    private static void RewriteOsu(string path, double r, Action<string>? log)
+    private static void RewriteOsu(string path, double r, bool removeBackground, Action<string>? log)
     {
         byte[] raw = File.ReadAllBytes(path);
         bool utf8Bom = raw.Length >= 3 && raw[0] == 0xEF && raw[1] == 0xBB && raw[2] == 0xBF;
@@ -285,6 +331,11 @@ public static class RateChanger
             else if (section == "[Events]" && trimmed.Length > 0)
             {
                 var p = line.Split(',');
+                if (removeBackground && p.Length >= 3 && p[0].Trim() == "0" && p[1].Trim() == "0")
+                {
+                    // 移除背景图引用（曲绘），让生成谱面与原谱面彻底无相同文件
+                    continue;
+                }
                 if (p[0].Trim() == "Video" && p.Length >= 2 && int.TryParse(p[1].Trim(), out int videoStart))
                 {
                     p[1] = ScaleInt(videoStart, r).ToString(CultureInfo.InvariantCulture);
@@ -353,6 +404,40 @@ public static class RateChanger
 
     private static long ScaleInt(double value, double r) =>
         Math.Max(0, (long)Math.Round(value / r, MidpointRounding.AwayFromZero));
+
+    /// <summary>按改写后的元数据生成 .osu 文件名（Artist - Title (Creator) [Version].osu）。</summary>
+    private static string? GetOsuFileNameFromMetadata(string osuPath)
+    {
+        string text = File.ReadAllText(osuPath);
+        string title = "", artist = "", creator = "", version = "";
+        bool inMeta = false;
+        foreach (string raw in text.Split('\n'))
+        {
+            string line = raw.TrimEnd('\r').Trim();
+            if (line.StartsWith('['))
+            {
+                if (inMeta) break;
+                inMeta = line.StartsWith("[Metadata]", StringComparison.OrdinalIgnoreCase);
+                continue;
+            }
+            if (!inMeta) continue;
+
+            if (line.StartsWith("Title:", StringComparison.OrdinalIgnoreCase) && title.Length == 0)
+                title = line[6..].Trim();
+            else if (line.StartsWith("Artist:", StringComparison.OrdinalIgnoreCase) && artist.Length == 0)
+                artist = line[7..].Trim();
+            else if (line.StartsWith("Creator:", StringComparison.OrdinalIgnoreCase) && creator.Length == 0)
+                creator = line[8..].Trim();
+            else if (line.StartsWith("Version:", StringComparison.OrdinalIgnoreCase) && version.Length == 0)
+                version = line[8..].Trim();
+        }
+
+        if (title.Length == 0 && artist.Length == 0 && version.Length == 0) return null;
+
+        string name = TransferEngine.SanitizeName($"{artist} - {title} ({creator}) [{version}].osu");
+        if (name.Length == 0 || name == ".osu") return null;
+        return name;
+    }
 
     private static string FormatDouble(double d)
     {

@@ -12,6 +12,7 @@ public class MainForm : Form
     private CheckBox _chkCols = null!;
     private CheckBox _chkMerge = null!;
     private CheckBox _chkDry = null!;
+    private CheckBox _chkRemoveBg = null!;
     private Button _btnDetect = null!;
     private Button _btnDetectDiff = null!;
     private Button _btnStart = null!;
@@ -223,6 +224,8 @@ public class MainForm : Form
         };
         speedRow.Controls.Add(_rateSpeed);
         speedRow.Controls.Add(new Label { Text = "×（范围 0.50 ~ 2.00，精确到 0.01）", AutoSize = true, Margin = new Padding(6, 4, 0, 0) });
+        _chkRemoveBg = new CheckBox { Text = "移除背景图（曲绘，推荐）", Checked = true, AutoSize = true, Margin = new Padding(16, 0, 0, 0) };
+        speedRow.Controls.Add(_chkRemoveBg);
         _btnGenerate = new Button { Text = "生成变速谱面", AutoSize = true, Height = 34, Margin = new Padding(16, 0, 0, 0) };
         _btnOpenFolder = new Button { Text = "打开所在文件夹", AutoSize = true, Height = 34, Enabled = false, Margin = new Padding(10, 0, 0, 0) };
         speedRow.Controls.Add(_btnGenerate);
@@ -250,8 +253,8 @@ public class MainForm : Form
         {
             Text = "说明：变速会把音频与谱面节奏整体改变（0.50x ~ 2.00x），生成的新文件以 (0.XX) 为前缀另存，不影响原谱面。\r\n" +
                    "支持拖入 .osz 或单个 .osu 文件（.osu 会自动附带同目录下的音频与背景图）。\r\n" +
-                   "生成的谱面会被标记为全新本地谱面：ID 清零、标题/难度名带倍速后缀、清空 Source、Tags 末尾随机加一个字母——" +
-                   "导入 stable / lazer 不会覆盖原谱面、不会提示更新。\r\n" +
+                   "生成的谱面会被标记为全新本地谱面：ID 清零、标题/难度名带倍速后缀、清空 Source、Tags 末尾随机加一个字母、" +
+                   "并移除曲绘——生成谱面与原谱面没有任何相同文件，绕过 stable 的更新检测。\r\n" +
                    "音频变速需要 ffmpeg.exe：请将其放到本程序同目录（或加入系统 PATH），否则无法生成正确的变速谱面。",
             Dock = DockStyle.Fill,
             ForeColor = Color.DimGray,
@@ -352,7 +355,7 @@ public class MainForm : Form
         {
             try
             {
-                RateChanger.Generate(_rateInput, speed, output, msg => BeginInvoke(() => AppendLog(msg)));
+                RateChanger.Generate(_rateInput, speed, output, msg => BeginInvoke(() => AppendLog(msg)), _chkRemoveBg.Checked);
                 _lastOutput = output;
                 BeginInvoke(() =>
                 {

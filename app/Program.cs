@@ -106,7 +106,7 @@ internal static class CliRunner
         Console.WriteLine($"输出: {output}");
         try
         {
-            RateChanger.Generate(input, speed, output, m => Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] {m}"));
+            RateChanger.Generate(input, speed, output, m => Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] {m}"), !args.Contains("--keep-bg"));
             Console.WriteLine("生成成功: " + output);
             return 0;
         }
