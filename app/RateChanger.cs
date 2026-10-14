@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO.Compression;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace OsuLazerToStable;
 
@@ -30,26 +31,39 @@ public static class RateChanger
         return string.Empty;
     }
 
-    public static void Generate(string inputOsz, double speed, string outputOsz, Action<string>? log = null)
+    public static void Generate(string input, double speed, string output, Action<string>? log = null)
     {
         speed = Math.Round(speed, 2, MidpointRounding.AwayFromZero);
         if (speed < 0.5 - 0.0001 || speed > 2.0 + 0.0001)
             throw new ArgumentException("倍速必须在 0.50 ~ 2.00 之间");
-        if (!File.Exists(inputOsz))
-            throw new FileNotFoundException("找不到输入文件: " + inputOsz);
-        if (string.IsNullOrWhiteSpace(outputOsz))
+        if (!File.Exists(input))
+            throw new FileNotFoundException("找不到输入文件: " + input);
+        if (string.IsNullOrWhiteSpace(output))
             throw new ArgumentException("请指定输出文件路径");
+
+        string ext = Path.GetExtension(input).ToLowerInvariant();
+        if (ext != ".osz" && ext != ".osu")
+            throw new ArgumentException("输入文件必须是 .osz 或 .osu");
 
         string workDir = Path.Combine(Path.GetTempPath(), "osuRate_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(workDir);
         try
         {
-            log?.Invoke($"解压 {Path.GetFileName(inputOsz)} …");
-            ZipFile.ExtractToDirectory(inputOsz, workDir);
+            if (ext == ".osz")
+            {
+                log?.Invoke($"解压 {Path.GetFileName(input)} …");
+                ZipFile.ExtractToDirectory(input, workDir);
+            }
+            else
+            {
+                log?.Invoke($"读取 {Path.GetFileName(input)} …");
+                File.Copy(input, Path.Combine(workDir, Path.GetFileName(input)));
+                CopyReferencedFiles(input, workDir, log);
+            }
 
             var osuFiles = Directory.GetFiles(workDir, "*.osu", SearchOption.AllDirectories).ToList();
             if (osuFiles.Count == 0)
-                throw new InvalidDataException("该 osz 中没有 .osu 谱面文件");
+                throw new InvalidDataException("没有找到 .osu 谱面文件");
 
             // 收集所有难度引用的音频
             var audioNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -89,16 +103,58 @@ public static class RateChanger
             }
 
             log?.Invoke("打包生成新 osz …");
-            string tmp = outputOsz + ".tmp";
+            string tmp = output + ".tmp";
             if (File.Exists(tmp)) File.Delete(tmp);
             ZipFile.CreateFromDirectory(workDir, tmp);
-            if (File.Exists(outputOsz)) File.Delete(outputOsz);
-            File.Move(tmp, outputOsz);
-            log?.Invoke($"生成完成: {outputOsz}");
+            if (File.Exists(output)) File.Delete(output);
+            File.Move(tmp, output);
+            log?.Invoke($"生成完成: {output}");
         }
         finally
         {
             try { Directory.Delete(workDir, true); } catch { }
+        }
+    }
+
+    /// <summary>输入为单个 .osu 文件时，把其引用的音频与背景图一并复制进工作目录。</summary>
+    private static void CopyReferencedFiles(string osuPath, string workDir, Action<string>? log)
+    {
+        string dir = Path.GetDirectoryName(Path.GetFullPath(osuPath))!;
+        foreach (string name in GetReferencedFilenames(osuPath))
+        {
+            string src = Path.Combine(dir, name.Replace('/', Path.DirectorySeparatorChar));
+            if (!File.Exists(src))
+            {
+                log?.Invoke($"[警告] 未找到引用文件: {name}（生成的 osz 将不含该文件）");
+                continue;
+            }
+            string dest = Path.Combine(workDir, name.Replace('/', Path.DirectorySeparatorChar));
+            Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
+            File.Copy(src, dest);
+            log?.Invoke($"已附带: {name}");
+        }
+    }
+
+    /// <summary>收集 .osu 引用的音频（AudioFilename）与背景图（[Events] 0,0,"..."）。</summary>
+    private static IEnumerable<string> GetReferencedFilenames(string osuPath)
+    {
+        foreach (string a in GetAudioFilenames(osuPath))
+            yield return a;
+
+        string text = File.ReadAllText(osuPath);
+        bool inEvents = false;
+        foreach (string raw in text.Split('\n'))
+        {
+            string line = raw.TrimEnd('\r').Trim();
+            if (line.StartsWith('['))
+            {
+                inEvents = line.StartsWith("[Events]", StringComparison.OrdinalIgnoreCase);
+                continue;
+            }
+            if (!inEvents) continue;
+
+            var m = Regex.Match(line, "^0,0,\"([^\"]+)\"", RegexOptions.IgnoreCase);
+            if (m.Success) yield return m.Groups[1].Value;
         }
     }
 
@@ -118,7 +174,8 @@ public static class RateChanger
         var sb = new StringBuilder(text.Length + 512);
         string section = "";
         bool warnedStoryboard = false;
-        bool sawBeatmapId = false, sawBeatmapSetId = false;
+        bool sawBeatmapId = false, sawBeatmapSetId = false, sawTags = false;
+        char tagLetter = (char)('a' + Random.Shared.Next(26));
 
         using var sr = new StringReader(text);
         string? line;
@@ -127,11 +184,12 @@ public static class RateChanger
             string trimmed = line.Trim();
             if (trimmed.StartsWith('[') && trimmed.EndsWith(']'))
             {
-                // 离开 [Metadata] 前补齐 ID 行，确保 osu 把该谱面当作全新本地谱面
+                // 离开 [Metadata] 前补齐 ID / Tags 行，确保 osu 把该谱面当作全新本地谱面
                 if (section == "[Metadata]")
                 {
                     if (!sawBeatmapSetId) sb.AppendLine("BeatmapSetID:-1");
                     if (!sawBeatmapId) sb.AppendLine("BeatmapID:0");
+                    if (!sawTags) sb.AppendLine("Tags:" + tagLetter);
                 }
                 section = trimmed;
                 sb.AppendLine(line);
@@ -183,6 +241,19 @@ public static class RateChanger
                 if (line.StartsWith("TitleUnicode:", StringComparison.OrdinalIgnoreCase))
                 {
                     sb.AppendLine("TitleUnicode:" + line[13..].TrimEnd() + $" ({r:0.00}x)");
+                    continue;
+                }
+                if (line.StartsWith("Source:", StringComparison.OrdinalIgnoreCase))
+                {
+                    // 删除乐曲来源信息
+                    sb.AppendLine("Source:");
+                    continue;
+                }
+                if (line.StartsWith("Tags:", StringComparison.OrdinalIgnoreCase))
+                {
+                    // 在原有 tag 后随机追加一个字母，绕过 stable 的更新检测
+                    sb.AppendLine("Tags:" + line[5..].TrimEnd() + " " + tagLetter);
+                    sawTags = true;
                     continue;
                 }
             }
@@ -265,11 +336,12 @@ public static class RateChanger
             sb.AppendLine(line);
         }
 
-        // [Metadata] 是文件最后一段时，循环后补插 ID 行
+        // [Metadata] 是文件最后一段时，循环后补插 ID / Tags 行
         if (section == "[Metadata]")
         {
             if (!sawBeatmapSetId) sb.AppendLine("BeatmapSetID:-1");
             if (!sawBeatmapId) sb.AppendLine("BeatmapID:0");
+            if (!sawTags) sb.AppendLine("Tags:" + tagLetter);
         }
 
         byte[] output = utf8Bom ? new UTF8Encoding(true).GetBytes(sb.ToString())
