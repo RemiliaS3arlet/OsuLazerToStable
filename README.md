@@ -1,10 +1,10 @@
 # osu!lazer → stable 迁移工具
 
-把 osu!lazer 中的**谱面**和**收藏夹**自动迁移到 osu!stable 的 Windows 图形化工具，附带 **osz 倍速生成器**。
+把 osu!lazer 中的**谱面**和**收藏夹**自动迁移到 osu!stable 的 Windows 图形化工具，附带 **osz 倍速生成器**、**sayobot 谱面下载**与 **4K/6K/7K 段位单曲 ACC 计算器**。
 
 ## 下载
 
-👉 **最新版下载：https://github.com/fallencatww/OsuLazerToStable/releases/latest**
+👉 **最新版下载：https://github.com/RemiliaS3arlet/OsuLazerToStable/releases/latest**
 
 在 Assets 里下载 `OsuLazerToStable-win-x64.zip`（自包含版，解压后双击即用，无需安装 .NET；已附带 ffmpeg.exe）。
 
@@ -29,6 +29,15 @@
   - `Source`（乐曲来源）清空，`Tags` 末尾随机追加一个字母；
   - 默认移除曲绘（背景图），生成谱面与原谱面没有任何相同文件。
   - 已实测：lazer 导入为独立谱面集（OnlineID=-1）；stable 导入为独立新文件夹，内容原样保留。
+
+**三、谱面下载（osu.sayobot.cn）**
+- 输入谱面集 ID（或 sayobot 链接）即可从 **osu.sayobot.cn（小夜镜像站）** 下载 .osz 到指定目录。
+- 下载完成后询问**是否需要进行倍速修改**：选「是」自动跳转到倍速生成页并载入该文件。
+
+**四、段位单曲 ACC 计算（4K / 6K / 7K）**
+- 内置《4 6 7k段位 個別ACC計算 by gyoza_goki & Blaite1016》全部数据：4K/6K/7K 共 **8 个课程、127 个等级**。
+- 选择键位 / 课程 / 等级后自动列出 4 首曲目与累计音符数；输入各曲目结束时的**通過時ACC**，自动计算每首单曲所需**個別ACC**（2 位小数 + 精确值）。
+- 支持填入「我的ACC」：按累计音符数加权计算当前总 ACC，并与通过线对比（绿=通过 / 红=未过）。
 
 ## 使用方法
 

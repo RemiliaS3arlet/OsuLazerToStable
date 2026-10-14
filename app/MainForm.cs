@@ -29,8 +29,29 @@ public class MainForm : Form
     private string _rateInput = string.Empty;
     private string _lastOutput = string.Empty;
 
+    // ---- 段位计算页 ----
+    private ComboBox _danMode = null!;
+    private ComboBox _danCourse = null!;
+    private ComboBox _danLevel = null!;
+    private readonly TextBox[] _danSong = new TextBox[4];
+    private readonly NumericUpDown[] _danPass = new NumericUpDown[4];
+    private readonly NumericUpDown[] _danMine = new NumericUpDown[4];
+    private readonly Label[] _danInd = new Label[4];
+    private readonly Label[] _danIndExact = new Label[4];
+    private readonly Label[] _danCheck = new Label[4];
+    private bool _danLoading;
+
+    // ---- 谱面下载页 ----
+    private TextBox _dlBox = null!;
+    private TextBox _dlDirBox = null!;
+    private Label _dlStatus = null!;
+    private Button _btnDl = null!;
+    private Button _btnDlOpenFolder = null!;
+    private string _dlLastFile = string.Empty;
+
     private TextBox _logBox = null!;
     private ProgressBar _progress = null!;
+    private TabControl _tabs = null!;
     private CancellationTokenSource? _cts;
     private StreamWriter? _fileLog;
 
@@ -43,7 +64,8 @@ public class MainForm : Form
         Font = new Font("Microsoft YaHei UI", 9F);
         BuildUi();
         AutoDetectPaths();
-        AppendLog("欢迎使用。迁移页：迁移谱面/收藏夹、检测差异；倍速页：拖入 .osz 生成变速新谱面。");
+        AppendLog("欢迎使用。迁移页：迁移谱面/收藏夹、检测差异；倍速页：拖入 .osz/.osu 生成变速谱面；");
+        AppendLog("谱面下载页：从 osu.sayobot.cn 下载 .osz；段位计算页：4K/6K/7K 段位单曲 ACC 计算。");
         AppendLog("迁移不会改动 lazer 的任何数据；写入 collection.db 前会自动备份原文件。");
     }
 
@@ -65,6 +87,9 @@ public class MainForm : Form
         var tabs = new TabControl { Dock = DockStyle.Fill };
         tabs.TabPages.Add(BuildMigrateTab());
         tabs.TabPages.Add(BuildRateTab());
+        tabs.TabPages.Add(BuildDownloadTab());
+        tabs.TabPages.Add(BuildDanTab());
+        _tabs = tabs;
         root.Controls.Add(tabs, 0, 0);
 
         _progress = new ProgressBar { Dock = DockStyle.Fill, Margin = new Padding(0, 6, 0, 0) };
@@ -264,6 +289,337 @@ public class MainForm : Form
 
         UpdateFfmpegHint();
         return page;
+    }
+
+    // ==================== 谱面下载页（osu.sayobot.cn） ====================
+
+    private TabPage BuildDownloadTab()
+    {
+        var page = new TabPage("谱面下载") { Padding = new Padding(8) };
+        var panel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 5 };
+        panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        panel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        page.Controls.Add(panel);
+
+        var row1 = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, ColumnCount = 3 };
+        row1.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        row1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        row1.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        _dlBox = new TextBox { Dock = DockStyle.Fill, PlaceholderText = "输入谱面集 ID（如 2606612）或 sayobot 链接" };
+        var btnWeb = new Button { Text = "打开网页", AutoSize = true };
+        row1.Controls.Add(new Label { Text = "谱面集 ID / 链接", AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(0, 6, 8, 0) }, 0, 0);
+        row1.Controls.Add(_dlBox, 1, 0);
+        row1.Controls.Add(btnWeb, 2, 0);
+        btnWeb.Click += (_, _) => System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://osu.sayobot.cn/") { UseShellExecute = true });
+        panel.Controls.Add(row1, 0, 0);
+
+        var row2 = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, ColumnCount = 3 };
+        row2.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        row2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        row2.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        _dlDirBox = new TextBox { Dock = DockStyle.Fill, Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads") };
+        var btnDir = new Button { Text = "浏览…", AutoSize = true };
+        row2.Controls.Add(new Label { Text = "保存到", AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(0, 6, 8, 0) }, 0, 0);
+        row2.Controls.Add(_dlDirBox, 1, 0);
+        row2.Controls.Add(btnDir, 2, 0);
+        btnDir.Click += (_, _) => PickFolder(_dlDirBox, "选择 .osz 保存目录");
+        panel.Controls.Add(row2, 0, 1);
+
+        var row3 = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, Padding = new Padding(0, 6, 0, 0), WrapContents = true };
+        _btnDl = new Button { Text = "下载 .osz", AutoSize = true, Width = 120, Height = 34 };
+        _btnDlOpenFolder = new Button { Text = "打开所在文件夹", AutoSize = true, Height = 34, Enabled = false, Margin = new Padding(10, 0, 0, 0) };
+        _dlStatus = new Label { Text = "来源：osu.sayobot.cn（小夜镜像站）", AutoSize = true, Margin = new Padding(14, 8, 0, 0), ForeColor = Color.DimGray };
+        row3.Controls.Add(_btnDl);
+        row3.Controls.Add(_btnDlOpenFolder);
+        row3.Controls.Add(_dlStatus);
+        panel.Controls.Add(row3, 0, 2);
+        _btnDl.Click += async (_, _) => await DownloadSayobotAsync();
+        _btnDlOpenFolder.Click += (_, _) =>
+        {
+            if (_dlLastFile.Length > 0 && File.Exists(_dlLastFile))
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{_dlLastFile}\"");
+        };
+
+        var help = new Label
+        {
+            Text = "输入谱面集 ID（网站链接 / 游戏内数字 ID）即可从 osu.sayobot.cn 下载 .osz 到指定目录。\r\n" +
+                   "下载完成后会询问是否需要进行倍速修改；选「是」将自动跳转到倍速生成页并载入该文件。",
+            Dock = DockStyle.Fill,
+            ForeColor = Color.DimGray,
+            Margin = new Padding(0, 6, 0, 0),
+        };
+        panel.Controls.Add(help, 0, 3);
+        return page;
+    }
+
+    private async Task DownloadSayobotAsync()
+    {
+        if (_cts != null) return;
+        if (!SayobotClient.TryParseSid(_dlBox.Text, out long sid))
+        {
+            MessageBox.Show(this, "请输入有效的谱面集 ID 或 sayobot 链接。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        string dir = _dlDirBox.Text.Trim();
+        if (dir.Length == 0) dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+        try { Directory.CreateDirectory(dir); }
+        catch (Exception e)
+        {
+            MessageBox.Show(this, "无法创建保存目录: " + e.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        _cts = new CancellationTokenSource();
+        _btnDl.Enabled = false;
+        _btnDlOpenFolder.Enabled = false;
+        _dlStatus.Text = "查询谱面信息…";
+        _progress.Style = ProgressBarStyle.Marquee;
+        AppendLog($"[下载] 查询谱面集 {sid} 的信息…");
+
+        var token = _cts.Token;
+        await Task.Run(async () =>
+        {
+            try
+            {
+                var info = await SayobotClient.GetMapInfoAsync(sid, token);
+                string fname = TransferEngine.SanitizeName($"{info.Sid} {info.Artist} - {info.Title}.osz");
+                string path = Path.Combine(dir, fname);
+                BeginInvoke(() =>
+                {
+                    AppendLog($"[下载] {info.Artist} - {info.Title} → {path}");
+                    _dlStatus.Text = "下载中…";
+                    _progress.Style = ProgressBarStyle.Blocks;
+                });
+                await SayobotClient.DownloadAsync(sid, path, (done, total) => BeginInvoke(() =>
+                {
+                    if (total > 0)
+                    {
+                        _progress.Maximum = (int)Math.Max(1, total);
+                        _progress.Value = (int)Math.Min(done, _progress.Maximum);
+                    }
+                }), token);
+                _dlLastFile = path;
+                BeginInvoke(() => OnDownloadDone(path));
+            }
+            catch (Exception e)
+            {
+                BeginInvoke(() =>
+                {
+                    _dlStatus.Text = "下载失败";
+                    AppendLog("[下载错误] " + e.Message);
+                    _progress.Style = ProgressBarStyle.Blocks;
+                    _progress.Value = 0;
+                    _btnDl.Enabled = true;
+                    _cts?.Dispose();
+                    _cts = null;
+                });
+            }
+        });
+    }
+
+    private void OnDownloadDone(string path)
+    {
+        AppendLog($"✅ 下载完成: {path}");
+        _dlStatus.Text = "下载完成";
+        _progress.Value = 0;
+        _btnDl.Enabled = true;
+        _btnDlOpenFolder.Enabled = true;
+        _cts?.Dispose();
+        _cts = null;
+
+        var answer = MessageBox.Show(this,
+            "谱面下载完成！\r\n\r\n是否需要进行倍速修改？", "下载完成",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        if (answer == DialogResult.Yes)
+        {
+            SetRateInput(path);
+            _tabs.SelectedIndex = 1; // 切到倍速生成页
+        }
+    }
+
+    // ==================== 段位单曲计算页 ====================
+
+    private TabPage BuildDanTab()
+    {
+        var page = new TabPage("段位计算") { Padding = new Padding(8) };
+        var panel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 4 };
+        panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        panel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        page.Controls.Add(panel);
+
+        var selRow = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, WrapContents = true, Padding = new Padding(0, 4, 0, 0) };
+        _danMode = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 80 };
+        _danCourse = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 220 };
+        _danLevel = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 160 };
+        selRow.Controls.Add(new Label { Text = "键位", AutoSize = true, Margin = new Padding(0, 4, 4, 0) });
+        selRow.Controls.Add(_danMode);
+        selRow.Controls.Add(new Label { Text = "课程", AutoSize = true, Margin = new Padding(12, 4, 4, 0) });
+        selRow.Controls.Add(_danCourse);
+        selRow.Controls.Add(new Label { Text = "等级", AutoSize = true, Margin = new Padding(12, 4, 4, 0) });
+        selRow.Controls.Add(_danLevel);
+        panel.Controls.Add(selRow, 0, 0);
+        _danMode.SelectedIndexChanged += (_, _) => OnDanModeChanged();
+        _danCourse.SelectedIndexChanged += (_, _) => OnDanCourseChanged();
+        _danLevel.SelectedIndexChanged += (_, _) => OnDanLevelChanged();
+
+        var table = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 6, Padding = new Padding(0, 8, 0, 0) };
+        table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        for (int i = 1; i < 6; i++) table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, i == 1 ? 110 : 100));
+        string[] heads = { "曲名", "通過時ACC(输入)", "我的ACC(选填)", "個別ACC", "個別ACC(精确)", "通过检查" };
+        for (int c = 0; c < 6; c++)
+            table.Controls.Add(new Label { Text = heads[c], AutoSize = true, Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Bold) }, c, 0);
+        for (int i = 0; i < 4; i++)
+        {
+            _danSong[i] = new TextBox { Dock = DockStyle.Fill, ReadOnly = true, BackColor = Color.FromArgb(248, 248, 250) };
+            _danPass[i] = new NumericUpDown { Dock = DockStyle.Fill, Minimum = 0, Maximum = 100, DecimalPlaces = 2, Increment = 0.01m };
+            _danMine[i] = new NumericUpDown { Dock = DockStyle.Fill, Minimum = 0, Maximum = 100, DecimalPlaces = 2, Increment = 0.01m };
+            _danInd[i] = new Label { Text = "-", AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(6, 6, 0, 0), Font = new Font("Microsoft YaHei UI", 10F, FontStyle.Bold) };
+            _danIndExact[i] = new Label { Text = "", AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(6, 6, 0, 0), ForeColor = Color.DimGray };
+            _danCheck[i] = new Label { Text = "", AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(6, 6, 0, 0) };
+            table.Controls.Add(_danSong[i], 0, i + 1);
+            table.Controls.Add(_danPass[i], 1, i + 1);
+            table.Controls.Add(_danMine[i], 2, i + 1);
+            table.Controls.Add(_danInd[i], 3, i + 1);
+            table.Controls.Add(_danIndExact[i], 4, i + 1);
+            table.Controls.Add(_danCheck[i], 5, i + 1);
+            int idx = i;
+            _danPass[idx].ValueChanged += (_, _) => RecomputeDan();
+            _danMine[idx].ValueChanged += (_, _) => RecomputeDan();
+        }
+        panel.Controls.Add(table, 0, 1);
+
+        var help = new Label
+        {
+            Text = "数据来源：4 6 7k段位 個別ACC計算 by gyoza_goki & Blaite1016（4K/6K/7K 共 8 个课程、127 个等级）。\r\n" +
+                   "在「通過時ACC」填入各曲目结束时的通过 ACC（每首歌是累计要求），自动计算每首单曲所需的個別ACC；\r\n" +
+                   "「我的ACC」填入你的单曲成绩后，会按累计音符数加权计算当前总 ACC 并与通过线比较（绿=通过，红=未过）。",
+            Dock = DockStyle.Fill,
+            ForeColor = Color.DimGray,
+            Margin = new Padding(0, 8, 0, 0),
+        };
+        panel.Controls.Add(help, 0, 2);
+
+        InitDan();
+        return page;
+    }
+
+    private void InitDan()
+    {
+        _danMode.Items.AddRange(DanCoursesData.Modes.Keys.OrderBy(k => k switch { "4k" => 0, "6k" => 1, _ => 2 }).ToArray());
+        _danMode.SelectedIndex = 0;
+    }
+
+    private void OnDanModeChanged()
+    {
+        _danLoading = true;
+        _danCourse.Items.Clear();
+        _danLevel.Items.Clear();
+        if (_danMode.SelectedItem is string mode && DanCoursesData.Modes.TryGetValue(mode, out var courses))
+        {
+            foreach (var c in courses) _danCourse.Items.Add(c.Name);
+            _danCourse.SelectedIndex = 0;
+        }
+        _danLoading = false;
+        OnDanCourseChanged();
+    }
+
+    private void OnDanCourseChanged()
+    {
+        _danLoading = true;
+        _danLevel.Items.Clear();
+        DanCourse? course = GetSelectedDanCourse();
+        if (course != null)
+        {
+            foreach (var lv in course.Levels) _danLevel.Items.Add(lv.Name);
+            _danLevel.SelectedIndex = 0;
+        }
+        _danLoading = false;
+        OnDanLevelChanged();
+    }
+
+    private DanCourse? GetSelectedDanCourse()
+    {
+        if (_danMode.SelectedItem is not string mode) return null;
+        if (!DanCoursesData.Modes.TryGetValue(mode, out var courses)) return null;
+        if (_danCourse.SelectedIndex < 0 || _danCourse.SelectedIndex >= courses.Count) return null;
+        return courses[_danCourse.SelectedIndex];
+    }
+
+    private DanLevel? GetSelectedDanLevel()
+    {
+        var course = GetSelectedDanCourse();
+        if (course == null || _danLevel.SelectedIndex < 0 || _danLevel.SelectedIndex >= course.Levels.Count) return null;
+        return course.Levels[_danLevel.SelectedIndex];
+    }
+
+    private void OnDanLevelChanged()
+    {
+        var lv = GetSelectedDanLevel();
+        _danLoading = true;
+        for (int i = 0; i < 4; i++)
+        {
+            _danSong[i].Text = lv != null && i < lv.Songs.Length ? lv.Songs[i] : "";
+            _danPass[i].Value = lv != null && i < lv.Acc.Length && lv.Acc[i].HasValue ? (decimal)lv.Acc[i]!.Value : 0;
+            _danMine[i].Value = 0;
+        }
+        _danLoading = false;
+        RecomputeDan();
+    }
+
+    private void RecomputeDan()
+    {
+        if (_danLoading) return;
+        var lv = GetSelectedDanLevel();
+        if (lv == null) return;
+
+        var x = new double[4];
+        var mine = new double?[4];
+        bool anyMine = false;
+        for (int i = 0; i < 4; i++)
+        {
+            x[i] = (double)_danPass[i].Value;
+            if ((double)_danMine[i].Value > 0)
+            {
+                mine[i] = (double)_danMine[i].Value;
+                anyMine = true;
+            }
+        }
+
+        // 個別ACC：ind[0]=X0; ind[i] = (T[i]*X[i] - T[i-1]*X[i-1]) / (T[i]-T[i-1])
+        for (int i = 0; i < 4; i++)
+        {
+            double cum = lv.Cum[i];
+            double ind = i == 0 ? x[0] : (lv.Cum[i] * x[i] - lv.Cum[i - 1] * x[i - 1]) / (lv.Cum[i] - lv.Cum[i - 1]);
+            _danInd[i].Text = ind.ToString("0.00");
+            _danIndExact[i].Text = ind.ToString("0.##########");
+        }
+
+        // 我的ACC 累计检查
+        for (int i = 0; i < 4; i++)
+        {
+            if (!anyMine)
+            {
+                _danCheck[i].Text = "";
+                continue;
+            }
+            double totalNotes = lv.Cum[i];
+            double accSum = 0;
+            for (int j = 0; j <= i; j++)
+            {
+                double nj = lv.Cum[j] - (j > 0 ? lv.Cum[j - 1] : 0);
+                accSum += (mine[j] ?? 0) * nj;
+            }
+            double cumAcc = accSum / totalNotes;
+            bool pass = cumAcc >= x[i] - 0.005;
+            _danCheck[i].Text = pass ? "✓ 通过" : "✗ 未过";
+            _danCheck[i].ForeColor = pass ? Color.ForestGreen : Color.Firebrick;
+        }
     }
 
     private void PickOsz()

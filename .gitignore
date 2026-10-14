@@ -23,6 +23,9 @@ release-staging/
 *.mp3
 
 tools/osu-input-test/
+tools/nobg-test/
+tools/dl-test/
 *.png
 *.osu
 *.mp3
+tools/sayobot-test.bin
