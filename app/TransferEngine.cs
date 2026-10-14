@@ -10,6 +10,10 @@ public class TransferOptions
     public bool TransferCollections = true;
     public bool DryRun = false;
     public bool MergeCollections = true;
+    /// <summary>仅迁移 stable 中缺失的谱面（按 OnlineID 或 .osu MD5 判定）；为 false 时迁移全部（含 stable 已有的）。</summary>
+    public bool OnlyMissing = true;
+    /// <summary>只做差异检测：输出缺失清单，不复制任何文件。</summary>
+    public bool DetectOnly = false;
 }
 
 public class TransferSummary
@@ -23,6 +27,12 @@ public class TransferSummary
     public int CollectionHashesWritten;
     public int CollectionHashesMissing;
     public string CollectionBackupPath = string.Empty;
+    /// <summary>差异检测：stable 缺失的谱面集数量。</summary>
+    public int MissingSets;
+    /// <summary>差异检测：stable 已存在的谱面集数量。</summary>
+    public int ExistingSets;
+    /// <summary>检测模式写出的缺失清单文件路径（可为空）。</summary>
+    public string MissingListPath = string.Empty;
 }
 
 public class TransferEngine
@@ -53,7 +63,7 @@ public class TransferEngine
         Log?.Invoke($"stable 已有曲目文件夹: {existingIds.Count}");
 
         var md5Index = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        if (opts.TransferCollections)
+        if (opts.TransferMaps || opts.TransferCollections)
             md5Index = StableData.BuildMd5Index(_songsDir, Log, ct);
 
         if (opts.TransferMaps)
@@ -65,9 +75,82 @@ public class TransferEngine
         return _sum;
     }
 
+    /// <summary>检测 lazer 中 stable 缺失的谱面集（按 OnlineID 文件夹前缀或 .osu 文件 MD5 判定）。</summary>
+    private List<LazerSet> DetectMissing(List<LazerSet> sets, HashSet<int> existingIds, HashSet<string> md5Index)
+    {
+        var missing = new List<LazerSet>();
+        int presentById = 0, presentByMd5 = 0;
+
+        foreach (var set in sets)
+        {
+            _ct.ThrowIfCancellationRequested();
+
+            bool byId = set.OnlineId > 0 && existingIds.Contains(set.OnlineId);
+            if (byId)
+            {
+                presentById++;
+                continue;
+            }
+
+            bool byMd5 = false;
+            foreach (var f in set.Files.Where(f => f.IsOsu))
+            {
+                string src = GetStorePath(f.Hash);
+                if (!File.Exists(src)) continue;
+                try
+                {
+                    if (md5Index.Contains(StableData.Md5OfBytes(File.ReadAllBytes(src))))
+                    {
+                        byMd5 = true;
+                        break;
+                    }
+                }
+                catch
+                {
+                    // 单个文件读取失败不影响判定
+                }
+            }
+
+            if (byMd5) presentByMd5++;
+            else missing.Add(set);
+        }
+
+        _sum.MissingSets = missing.Count;
+        _sum.ExistingSets = sets.Count - missing.Count;
+        Log?.Invoke($"差异检测完成: lazer {sets.Count} 集 → stable 缺失 {missing.Count} 集" +
+                    $"（按 ID 已存在 {presentById}，按 MD5 已存在 {presentByMd5}）");
+        return missing;
+    }
+
     private void TransferMaps(List<LazerSet> sets, HashSet<int> existingIds, HashSet<string> md5Index)
     {
         Log?.Invoke("== 迁移谱面 ==");
+
+        var missing = DetectMissing(sets, existingIds, md5Index);
+
+        if (_opts.DetectOnly)
+        {
+            if (missing.Count > 0)
+            {
+                string logsDir = Path.Combine(AppContext.BaseDirectory, "logs");
+                Directory.CreateDirectory(logsDir);
+                string listPath = Path.Combine(logsDir, $"missing-{DateTime.Now:yyyyMMdd-HHmmss}.txt");
+                var lines = new List<string> { $"lazer 有 {missing.Count} 个谱面集在 stable 中缺失（{DateTime.Now:yyyy-MM-dd HH:mm:ss}）", "" };
+                foreach (var s in missing)
+                {
+                    var (title, artist) = ReadSetMetadata(s);
+                    lines.Add($"{s.OnlineId}\t{artist} - {title}\t{s.SetHash}");
+                }
+                File.WriteAllLines(listPath, lines);
+                _sum.MissingListPath = listPath;
+                Log?.Invoke($"缺失清单已保存: {listPath}");
+            }
+            else
+            {
+                Log?.Invoke("stable 已包含 lazer 的全部谱面，没有缺失。");
+            }
+            return;
+        }
 
         if (!_opts.DryRun)
             PreflightWriteCheck();
@@ -76,10 +159,12 @@ public class TransferEngine
             Directory.EnumerateDirectories(_songsDir).Select(Path.GetFileName).Where(n => n != null)!,
             StringComparer.OrdinalIgnoreCase);
 
-        var plan = sets.Where(s => !(s.OnlineId > 0 && existingIds.Contains(s.OnlineId))).ToList();
+        var plan = _opts.OnlyMissing ? missing : sets;
         _sum.TotalSets = plan.Count;
-        int skippedExisting = sets.Count - plan.Count;
-        Log?.Invoke($"需要迁移 {plan.Count} 个谱面集（{skippedExisting} 个在 stable 中已存在，自动跳过）");
+        if (_opts.OnlyMissing)
+            Log?.Invoke($"仅迁移 stable 缺失的 {plan.Count} 个谱面集");
+        else
+            Log?.Invoke($"迁移全部 {plan.Count} 个谱面集（含 stable 已存在的，目录名会加序号后缀避免覆盖）");
 
         int fileTotal = Math.Max(1, plan.Sum(s => s.Files.Count));
         int fileDone = 0;

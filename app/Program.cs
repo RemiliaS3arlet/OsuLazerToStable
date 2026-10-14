@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 namespace OsuLazerToStable;
@@ -22,6 +23,11 @@ internal static class CliRunner
     {
         try { Console.OutputEncoding = Encoding.UTF8; } catch { /* 输出重定向时控制台不可用 */ }
 
+        // ---- 倍速生成子命令 ----
+        string? rateInput = GetArg(args, "--rate");
+        if (rateInput != null)
+            return RunRate(args, rateInput);
+
         string lazer = string.Empty, stable = string.Empty;
         var opts = new TransferOptions();
 
@@ -38,6 +44,9 @@ internal static class CliRunner
                 case "--dry-run": opts.DryRun = true; break;
                 case "--merge": opts.MergeCollections = true; break;
                 case "--no-merge": opts.MergeCollections = false; break;
+                case "--only-missing": opts.OnlyMissing = true; break;
+                case "--all-maps": opts.OnlyMissing = false; break;
+                case "--detect-only": opts.DetectOnly = true; break;
             }
         }
 
@@ -48,7 +57,7 @@ internal static class CliRunner
 
         Console.WriteLine($"lazer: {lazer}");
         Console.WriteLine($"stable: {stable}");
-        Console.WriteLine($"模式: {(opts.DryRun ? "演练" : "正式")} | 谱面:{(opts.TransferMaps ? "是" : "否")} 收藏夹:{(opts.TransferCollections ? "是" : "否")} 合并:{(opts.MergeCollections ? "是" : "否")}");
+        Console.WriteLine($"模式: {(opts.DryRun ? "演练" : "正式")} | 谱面:{(opts.TransferMaps ? "是" : "否")} 收藏夹:{(opts.TransferCollections ? "是" : "否")} 合并:{(opts.MergeCollections ? "是" : "否")} 仅缺失:{(opts.OnlyMissing ? "是" : "否")} 仅检测:{(opts.DetectOnly ? "是" : "否")}");
 
         if (args.Contains("--selftest-colldb"))
             return SelfTestCollectionDb(stable);
@@ -68,8 +77,11 @@ internal static class CliRunner
             var sum = engine.Run(lazer, stable, opts, CancellationToken.None);
             Console.WriteLine();
             Console.WriteLine(
-                $"== 完成: 谱面集 {sum.CopiedSets}/{sum.TotalSets}（跳过 {sum.SkippedSets}）, 文件 {sum.CopiedFiles}, " +
+                $"== 差异: stable 缺失 {sum.MissingSets} 集 / 已有 {sum.ExistingSets} 集" +
+                $" | 完成: 谱面集 {sum.CopiedSets}/{sum.TotalSets}（跳过 {sum.SkippedSets}）, 文件 {sum.CopiedFiles}, " +
                 $"收藏夹新增 {sum.CollectionsWritten}, 收藏引用 {sum.CollectionHashesWritten}（缺失 {sum.CollectionHashesMissing}）");
+            if (sum.MissingListPath.Length > 0)
+                Console.WriteLine($"缺失清单: {sum.MissingListPath}");
             return 0;
         }
         catch (Exception e)
@@ -77,6 +89,37 @@ internal static class CliRunner
             Console.WriteLine("失败: " + e.Message);
             return 1;
         }
+    }
+
+    private static int RunRate(string[] args, string input)
+    {
+        double speed = double.Parse(GetArg(args, "--speed") ?? "1.25", CultureInfo.InvariantCulture);
+        string? outArg = GetArg(args, "--out");
+        string output = outArg ?? Path.Combine(
+            Path.GetDirectoryName(Path.GetFullPath(input))!,
+            $"({speed:0.00}) {Path.GetFileNameWithoutExtension(input)}.osz");
+
+        Console.WriteLine($"输入: {input}");
+        Console.WriteLine($"倍速: {speed:0.00}x");
+        Console.WriteLine($"输出: {output}");
+        try
+        {
+            RateChanger.Generate(input, speed, output, m => Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] {m}"));
+            Console.WriteLine("生成成功: " + output);
+            return 0;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("生成失败: " + e.Message);
+            return 1;
+        }
+    }
+
+    private static string? GetArg(string[] args, string name)
+    {
+        for (int i = 0; i < args.Length - 1; i++)
+            if (args[i] == name) return args[i + 1];
+        return null;
     }
 
     /// <summary>读取 stable 的 collection.db，原样写回临时文件并做字节比对，验证读写格式与 stable 一致。</summary>

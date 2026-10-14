@@ -13,7 +13,11 @@ tools/schema-dump.txt
 tools/reflect-out.txt
 tools/dryrun.log
 tools/portable/
+tools/ffmpeg/
 .ghconfig/
 .tmp/
 release-single/
+release-staging/
 *.zip
+*.osz
+*.mp3
