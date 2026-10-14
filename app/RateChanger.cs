@@ -118,6 +118,7 @@ public static class RateChanger
         var sb = new StringBuilder(text.Length + 512);
         string section = "";
         bool warnedStoryboard = false;
+        bool sawBeatmapId = false, sawBeatmapSetId = false;
 
         using var sr = new StringReader(text);
         string? line;
@@ -126,6 +127,12 @@ public static class RateChanger
             string trimmed = line.Trim();
             if (trimmed.StartsWith('[') && trimmed.EndsWith(']'))
             {
+                // 离开 [Metadata] 前补齐 ID 行，确保 osu 把该谱面当作全新本地谱面
+                if (section == "[Metadata]")
+                {
+                    if (!sawBeatmapSetId) sb.AppendLine("BeatmapSetID:-1");
+                    if (!sawBeatmapId) sb.AppendLine("BeatmapID:-1");
+                }
                 section = trimmed;
                 sb.AppendLine(line);
                 continue;
@@ -151,11 +158,19 @@ public static class RateChanger
                 if (line.StartsWith("BeatmapID:", StringComparison.OrdinalIgnoreCase))
                 {
                     sb.AppendLine("BeatmapID:-1");
+                    sawBeatmapId = true;
                     continue;
                 }
                 if (line.StartsWith("BeatmapSetID:", StringComparison.OrdinalIgnoreCase))
                 {
                     sb.AppendLine("BeatmapSetID:-1");
+                    sawBeatmapSetId = true;
+                    continue;
+                }
+                if (line.StartsWith("Version:", StringComparison.OrdinalIgnoreCase))
+                {
+                    // 难度名追加倍速后缀：即使与原始谱面合并进同一谱面集，也不会顶替原难度
+                    sb.AppendLine("Version:" + line[8..].TrimEnd() + $" ({r:0.00}x)");
                     continue;
                 }
             }
@@ -236,6 +251,13 @@ public static class RateChanger
             }
 
             sb.AppendLine(line);
+        }
+
+        // [Metadata] 是文件最后一段时，循环后补插 ID 行
+        if (section == "[Metadata]")
+        {
+            if (!sawBeatmapSetId) sb.AppendLine("BeatmapSetID:-1");
+            if (!sawBeatmapId) sb.AppendLine("BeatmapID:-1");
         }
 
         byte[] output = utf8Bom ? new UTF8Encoding(true).GetBytes(sb.ToString())
