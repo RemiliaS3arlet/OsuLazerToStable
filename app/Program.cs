@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 
 namespace OsuLazerToStable;
@@ -291,7 +291,7 @@ internal static class CliRunner
                         Console.Write($"\r{Math.Min(100, pct)}%   ");
                     }
                 }
-            }, CancellationToken.None);
+            }, CancellationToken.None, source => Console.WriteLine($"\n使用下载源: {source}"));
             Console.WriteLine();
             Console.WriteLine("下载完成: " + path);
             return 0;

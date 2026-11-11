@@ -70,6 +70,7 @@ public class MainForm : Form
     private readonly List<Panel> _pages = new();
     private readonly List<NavButton> _nav = new();
     private CancellationTokenSource? _cts;
+    private CancellationTokenSource? _dlCts;
     private StreamWriter? _fileLog;
     private Label _statusStrip = null!;
     private Label _statSets = null!;
@@ -1335,7 +1336,7 @@ public class MainForm : Form
 
     private async Task DownloadSayobotAsync()
     {
-        if (_cts != null) return;
+        if (_dlCts != null) return;
         if (!SayobotClient.TryParseSid(_dlBox.Text, out long sid))
         {
             MessageBox.Show(this, "请输入有效的谱面集 ID 或 sayobot 链接。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1351,14 +1352,14 @@ public class MainForm : Form
             return;
         }
 
-        _cts = new CancellationTokenSource();
+        _dlCts = new CancellationTokenSource();
         _btnDl.Enabled = false;
         _btnDlOpenFolder.Enabled = false;
         _dlStatus.Text = "查询谱面信息…";
         _progress.IsMarquee = true;
         AppendLog($"[下载] 查询谱面集 {sid} 的信息…");
 
-        var token = _cts.Token;
+        var token = _dlCts.Token;
         await Task.Run(async () =>
         {
             try
@@ -1379,7 +1380,7 @@ public class MainForm : Form
                         _progress.Maximum = (int)Math.Max(1, total);
                         _progress.Value = (int)Math.Min(done, _progress.Maximum);
                     }
-                }), token);
+                }), token, source => BeginInvoke(() => _dlStatus.Text = $"下载中…（来源 {source}）"));
                 _dlLastFile = path;
                 BeginInvoke(() => OnDownloadDone(path));
             }
@@ -1392,8 +1393,8 @@ public class MainForm : Form
                     _progress.IsMarquee = false;
                     _progress.Value = 0;
                     _btnDl.Enabled = true;
-                    _cts?.Dispose();
-                    _cts = null;
+                    _dlCts?.Dispose();
+                    _dlCts = null;
                 });
             }
         });
@@ -1406,8 +1407,8 @@ public class MainForm : Form
         _progress.Value = 0;
         _btnDl.Enabled = true;
         _btnDlOpenFolder.Enabled = true;
-        _cts?.Dispose();
-        _cts = null;
+        _dlCts?.Dispose();
+        _dlCts = null;
 
         var answer = MessageBox.Show(this,
             "谱面下载完成！\r\n\r\n是否需要进行倍速修改？", "下载完成",
@@ -1873,6 +1874,7 @@ public class MainForm : Form
         return $"{bytes / 1024.0 / 1024.0 / 1024.0:F2} GB";
     }
 }
+
 
 
 

@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 
 namespace OsuLazerToStable;
 
@@ -324,21 +324,89 @@ public static class SayobotClient
         };
     }
 
-    /// <summary>下载 .osz。progress 回调 (已下载字节, 总字节或 0)。</summary>
-    public static async Task DownloadAsync(long sid, string savePath, Action<long, long>? progress, CancellationToken ct)
+    /// <summary>下载 .osz。多下载源 + 重试：sayobot → osu.direct 镜像。
+    /// progress 回调 (已下载字节, 总字节或 0)；onSource 回调当前使用的下载源名称。</summary>
+    public static async Task DownloadAsync(long sid, string savePath, Action<long, long>? progress,
+        CancellationToken ct, Action<string>? onSource = null)
     {
-        using var req = new HttpRequestMessage(HttpMethod.Get, $"https://dl.sayobot.cn/beatmaps/download/sets/{sid}");
-        req.Headers.Referrer = new Uri("https://osu.sayobot.cn/");
-        req.Headers.TryAddWithoutValidation("User-Agent", "OsuLazerToStable/1.5");
+        var sources = new (string Name, string Url)[]
+        {
+            ("sayobot", $"https://dl.sayobot.cn/beatmaps/download/sets/{sid}"),
+            ("osu.direct", $"https://osu.direct/api/d/{sid}"),
+        };
+
+        Exception? lastError = null;
+        foreach (var (name, url) in sources)
+        {
+            for (int attempt = 1; attempt <= 2; attempt++)
+            {
+                ct.ThrowIfCancellationRequested();
+                try
+                {
+                    onSource?.Invoke(name);
+                    await DownloadToFileAsync(url, sid, savePath, progress, ct);
+                    if (IsValidOsz(savePath)) return;
+                    throw new InvalidDataException("下载内容不是有效的 osz 压缩包");
+                }
+                catch (OperationCanceledException)
+                {
+                    TryDelete(savePath);
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    lastError = e;
+                    TryDelete(savePath);
+                    if (attempt < 2)
+                    {
+                        try { await Task.Delay(800, ct); } catch (OperationCanceledException) { throw; }
+                    }
+                }
+            }
+        }
+
+        throw new InvalidOperationException(
+            "所有下载源都失败（sayobot 官方节点可能繁忙，osu.direct 镜像也不可用）。最后一次错误：" +
+            (lastError?.Message ?? "未知错误"));
+    }
+
+    private static void TryDelete(string path)
+    {
+        try { if (File.Exists(path)) File.Delete(path); } catch { }
+    }
+
+    private static bool IsValidOsz(string path)
+    {
+        try
+        {
+            var info = new FileInfo(path);
+            if (!info.Exists || info.Length < 4) return false;
+            using var fs = File.OpenRead(path);
+            byte[] magic = new byte[2];
+            return fs.Read(magic, 0, 2) == 2 && magic[0] == (byte)'P' && magic[1] == (byte)'K';
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static async Task DownloadToFileAsync(string url, long sid, string savePath,
+        Action<long, long>? progress, CancellationToken ct)
+    {
+        using var req = new HttpRequestMessage(HttpMethod.Get, url);
+        req.Headers.Referrer = new Uri(url.Contains("osu.direct", StringComparison.OrdinalIgnoreCase)
+            ? "https://osu.direct/"
+            : "https://osu.sayobot.cn/");
+        req.Headers.TryAddWithoutValidation("User-Agent", "OsuLazerToStable/2.0");
 
         using var resp = await Http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ct);
         resp.EnsureSuccessStatusCode();
 
         long total = resp.Content.Headers.ContentLength ?? 0;
         await using var src = await resp.Content.ReadAsStreamAsync(ct);
-
+        await using (var dst = File.Create(savePath))
         {
-            await using var dst = File.Create(savePath);
             byte[] buf = new byte[256 * 1024];
             long done = 0;
             int read;
@@ -349,14 +417,6 @@ public static class SayobotClient
                 progress?.Invoke(done, total);
             }
         }
-
-        // 校验是否为 zip（osz）
-        if (new FileInfo(savePath).Length < 4)
-            throw new InvalidDataException("下载内容过小，可能不是有效的 osz");
-        await using var check = File.OpenRead(savePath);
-        byte[] magic = new byte[2];
-        if (check.Read(magic, 0, 2) != 2 || magic[0] != (byte)'P' || magic[1] != (byte)'K')
-            throw new InvalidDataException("下载内容不是有效的 osz 压缩包（谱面可能已被删除或不存在）");
     }
 }
 
