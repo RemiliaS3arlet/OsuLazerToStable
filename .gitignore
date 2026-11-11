@@ -29,3 +29,6 @@ tools/dl-test/
 *.osu
 *.mp3
 tools/sayobot-test.bin
+dist2/
+!app/assets/banner.png
+!docs/

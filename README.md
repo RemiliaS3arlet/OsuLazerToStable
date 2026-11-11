@@ -1,6 +1,6 @@
-# osu!lazer → stable 迁移工具
+﻿# osu!lazer → stable 迁移工具
 
-把 osu!lazer 中的**谱面**和**收藏夹**自动迁移到 osu!stable 的 Windows 图形化工具，附带 **osz 倍速生成器**、**sayobot 谱面下载**与 **4K/6K/7K 段位单曲 ACC 计算器**。
+把 osu!lazer 中的**谱面**和**收藏夹**自动迁移到 osu!stable 的 Windows 图形化工具，附带 **osz 倍速生成器**、**sayobot 谱面搜索/下载（封面、试听、官网搜索语法）**与 **4K/6K/7K 段位单曲 ACC 计算器**。全新深色界面，窗口自适应。
 
 ## 下载
 
@@ -16,7 +16,7 @@
 - 「检测差异」按钮：一键检测 lazer 中有哪些谱面集在 stable 中缺失，并生成缺失清单文件（logs 目录）。
 - 谱面按谱面集重建到 stable 的 `Songs` 目录，文件夹命名与 stable 惯例一致：`{谱面集ID} {艺术家} - {标题}`。
 - 收藏夹写入 stable 的 `collection.db`（与 lazer 相同的「Favourites」收藏夹也会一并迁移）；写入前自动备份原文件。
-- 中文界面，带进度条、完整日志（界面 + 本地日志文件）。
+- 中文深色界面，带进度条与单行状态栏；完整日志自动写入 `logs` 目录。
 
 **二、倍速生成（osz 变速）**
 - 把 `.osz` **或单个 `.osu` 文件**拖入（或点击选择），选择倍速 **0.50x ~ 2.00x（精确到 0.01）**，点「生成变速谱面」。
@@ -30,14 +30,22 @@
   - 默认移除曲绘（背景图），生成谱面与原谱面没有任何相同文件。
   - 已实测：lazer 导入为独立谱面集（OnlineID=-1）；stable 导入为独立新文件夹，内容原样保留。
 
-**三、谱面下载（osu.sayobot.cn）**
-- 输入谱面集 ID（或 sayobot 链接）即可从 **osu.sayobot.cn（小夜镜像站）** 下载 .osz 到指定目录。
-- 下载完成后询问**是否需要进行倍速修改**：选「是」自动跳转到倍速生成页并载入该文件。
+**三、谱面搜索与下载（osu.sayobot.cn）**
+- **关键词搜索**：输入歌曲名 / 艺术家 / 谱师，结果按难度展开，列出「谱面 + 难度 + 模式 + 状态 + OD + HP + 星级」。
+- **官网搜索语法**（与 osu.ppy.sh/beatmapsets 一致）：
+  - 数值：`stars>6`、`od<8`、`hp>=5`、`ar>9`、`cs<4`、`bpm>180`、`length<180`、`plays>10000`、`favourites>500`
+  - 文本：`artist=xi`、`title=zenith`、`creator=Sotarks`
+  - 分类：`mode=mania|taiko|catch|osu`、`status=ranked|approved|qualified|loved|pending|wip|graveyard`
+  - 例：`blue zenith stars>6 mode=osu status=ranked`
+- **状态标注**按官网分类（上架 Ranked / Approved / Qualified / Loved / 待定 Pending / 制作中 WIP / 坟场 Graveyard）。
+- **封面**：列表缩略图 + 右侧大图（谱师、状态、收藏数、游玩数）；**试听**：`▶` / `⏸` 图标按钮，播放 osu! 官方 10 秒预览音频。
+- **排序**：相关度 / 标题 / 艺术家 / 难度(★) / 收藏数 / 游玩数 / 更新时间 / 状态，可升序或降序。
+- 单击结果选中、双击直接下载；也可直接输入谱面集 ID 或 sayobot 链接下载。下载完成后询问**是否需要进行倍速修改**。
 
 **四、段位单曲 ACC 计算（4K / 6K / 7K）**
 - 内置《4 6 7k段位 個別ACC計算 by gyoza_goki & Blaite1016》全部数据：4K/6K/7K 共 **8 个课程、127 个等级**。
 - 选择键位 / 课程 / 等级后自动列出 4 首曲目与累计音符数；输入各曲目结束时的**通過時ACC**，自动计算每首单曲所需**個別ACC**（2 位小数 + 精确值）。
-- 支持填入「我的ACC」：按累计音符数加权计算当前总 ACC，并与通过线对比（绿=通过 / 红=未过）。
+- 只保留 曲名 / 通過時ACC / 個別ACC / 精确值 四列（按需求移除了「我的ACC」与「检查」）。
 
 ## 使用方法
 
@@ -56,6 +64,14 @@
 2. 选择倍速（0.50 ~ 2.00，0.50x 为半速、2.00x 为双倍速）。
 3. 点「生成变速谱面」，选择保存位置（默认文件名已带 `(0.XX)` 前缀），等待完成。
 4. 音频变速依赖 **ffmpeg.exe**：发布包已附带；若自行构建，请把 ffmpeg.exe 放到程序同目录或加入系统 PATH。
+
+### 谱面搜索与下载
+
+1. 切到「谱面下载」页，在搜索框输入歌曲名（也可以带官网语法，例如 `blue zenith stars>6 mode=osu`），回车或点「搜索」。
+2. 结果列表每行是一个难度，含封面缩略图、难度名、模式、状态、OD / HP / 星级；单击选中（右侧显示封面与集信息），双击直接下载。
+3. 需要试听时点封面下方的 `▶`（播放）/ `⏸`（暂停）。
+4. 用右上角「排序」下拉 + 升/降序按钮调整顺序；下载目录在下方「保存目录」里选择。
+5. 也可以不用搜索，直接在「谱面集 ID / 链接」里填 ID（如 `2510026`）或 sayobot 链接下载。
 
 ### 选项说明（迁移页）
 
@@ -77,6 +93,10 @@ OsuLazerToStable.exe --cli [--lazer 目录] [--stable 目录] [--maps|--no-maps]
 
 # 倍速生成
 OsuLazerToStable.exe --cli --rate 输入.osz --speed 1.25 [--out 输出.osz]
+
+# 谱面搜索（支持官网语法）与下载
+OsuLazerToStable.exe --cli --sayobot-search "blue zenith stars>6"
+OsuLazerToStable.exe --cli --sayobot-dl 2510026 [--dl-dir 目录]
 ```
 
 ## 注意事项
@@ -102,3 +122,9 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 - Realm 数据通过 `Realm` NuGet（20.1.0，与 lazer 所用版本一致）以只读方式打开，schema 类仅声明迁移所需的 4 个模型（`BeatmapCollection`、`BeatmapSet`、`RealmNamedFileUsage`、`File`），与 lazer 2026.1005 的持久化结构精确对应。
 - `collection.db` 的读写与 ppy/osu 的 `LegacyCollectionImporter` 完全一致：`int32 版本 + int32 数量 + (名称字符串[0x00 空 / 0x0B+7位长度+UTF-8] + int32 数量 + MD5 字符串列表)`，版本号沿用你 stable 现有文件的版本。
 - 倍速改写规则：所有时间点 ÷ 倍速（含 AudioLeadIn、PreviewTime、红/绿线 offset、红线 beatLength、HitObjects 时间与滑条/长条/转盘结束时间、休息段、Bookmarks），滑条长度与 SV 不变（时长随 BPM 自动缩短）；音频用 ffmpeg `atempo` 变速（1.00 ~ 2.00 单次滤镜即可）。
+- 谱面搜索：sayobot `beatmaplist` 接口（POST `{"cmd":"beatmaplist","keyword":"..."}`），结果再逐个查 `v2/beatmapinfo` 拿难度明细（AR/CS/OD/HP、星级、BPM、模式）；官网语法在本地解析后对结果做过滤与排序。
+- 封面与试听来自 osu! 官方 CDN（`b.ppy.sh/thumb/{id}l.jpg`、`b.ppy.sh/preview/{id}.mp3`，预览音频为 OGG，用 NAudio + NAudio.Vorbis 解码播放）。
+- 界面：WinForms 自绘深色主题（圆角卡片/按钮、自绘进度条、自绘 ListView），窗口缩放时列表列宽与右侧封面栏按比例重算。
+
+
+

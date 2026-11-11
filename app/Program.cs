@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 
 namespace OsuLazerToStable;
@@ -8,6 +8,14 @@ internal static class Program
     [STAThread]
     static int Main(string[] args)
     {
+        // 无头界面预览：把窗口渲染成 PNG（用于检查 UI 效果）
+        if (args.Length > 0 && args[0] == "--ui-preview")
+            return UiPreview(args.Length > 1 ? args[1] : "ui-preview.png",
+                args.Length > 2 ? int.Parse(args[2]) : 0,
+                args.Length > 3 ? args[3] : null,
+                args.Length > 4 ? int.Parse(args[4]) : 1060,
+                args.Length > 5 ? int.Parse(args[5]) : 720);
+
         if (args.Any(a => a is "--cli" or "-cli"))
             return CliRunner.Run(args);
 
@@ -15,6 +23,83 @@ internal static class Program
         Application.Run(new MainForm());
         return 0;
     }
+
+    private static int UiPreview(string outputPath, int pageIndex, string? prefillSearch, int width = 1060, int height = 720)
+    {
+        try
+        {
+            // 预览用 DPI-unaware 模式，保证截图 1:1 且与物理像素一致
+            Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            using var form = new MainForm
+            {
+                StartPosition = FormStartPosition.Manual,
+                Location = new Point(10, 10),
+                ShowInTaskbar = false,
+                TopMost = true,
+            };
+            form.ClientSize = new Size(width, height);
+            form.Show();
+            form.Activate();
+            form.SetPreviewPage(pageIndex);
+            for (int i = 0; i < 40; i++)
+            {
+                Application.DoEvents();
+                Thread.Sleep(25);
+            }
+
+            if (!string.IsNullOrWhiteSpace(prefillSearch))
+            {
+                form.PreviewSearch(prefillSearch);
+                for (int i = 0; i < 80; i++)
+                {
+                    Application.DoEvents();
+                    Thread.Sleep(50);
+                }
+            }
+
+            // 用 PrintWindow 抓取窗口内容（不受遮挡影响，且能渲染自绘控件）
+            IntPtr hwnd = form.Handle;
+            using var full = new Bitmap(form.Width, form.Height);
+            using (var g = Graphics.FromImage(full))
+            {
+                IntPtr hdc = g.GetHdc();
+                try { PrintWindow(hwnd, hdc, 2u); } // PW_RENDERFULLCONTENT
+                finally { g.ReleaseHdc(hdc); }
+            }
+
+            // 裁掉窗口边框，只保留客户区
+            int borderX = Math.Max(0, (form.Width - form.ClientSize.Width) / 2);
+            int topH = Math.Max(0, form.Height - form.ClientSize.Height - borderX);
+            var crop = new Rectangle(borderX, topH, form.ClientSize.Width, form.ClientSize.Height);
+            using (var client = full.Clone(crop, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+                client.Save(outputPath, System.Drawing.Imaging.ImageFormat.Png);
+            form.Close();
+            Console.WriteLine("UI preview saved: " + Path.GetFullPath(outputPath));
+            return 0;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("UI preview failed: " + e);
+            return 1;
+        }
+    }
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool PrintWindow(IntPtr hwnd, IntPtr hdc, uint flags);
+
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+    private struct RECT
+    {
+        public int Left, Top, Right, Bottom;
+    }
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 }
 
 internal static class CliRunner
@@ -22,6 +107,16 @@ internal static class CliRunner
     public static int Run(string[] args)
     {
         try { Console.OutputEncoding = Encoding.UTF8; } catch { /* 输出重定向时控制台不可用 */ }
+
+        // ---- sayobot 试听自检 ----
+        string? previewArg = GetArg(args, "--sayobot-preview-test");
+        if (previewArg != null)
+            return RunPreviewTestAsync(previewArg).GetAwaiter().GetResult();
+
+        // ---- sayobot 搜索子命令 ----
+        string? searchArg = GetArg(args, "--sayobot-search");
+        if (searchArg != null)
+            return RunSayobotSearchAsync(searchArg).GetAwaiter().GetResult();
 
         // ---- sayobot 下载子命令 ----
         string? dlArg = GetArg(args, "--sayobot-dl");
@@ -122,6 +217,52 @@ internal static class CliRunner
         }
     }
 
+    private static async Task<int> RunPreviewTestAsync(string sidText)
+    {
+        try
+        {
+            if (!long.TryParse(sidText, out long sid))
+            {
+                Console.WriteLine("sid 无效");
+                return 1;
+            }
+            string path = await SayobotClient.DownloadPreviewAsync(sid, CancellationToken.None);
+            Console.WriteLine($"试听文件: {path} ({new FileInfo(path).Length} bytes)");
+            using var reader = new NAudio.Vorbis.VorbisWaveReader(path);
+            Console.WriteLine($"解码成功: {reader.TotalTime:m\\:ss} / {reader.WaveFormat.SampleRate}Hz / {reader.WaveFormat.Channels}ch");
+            return 0;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("试听自检失败: " + e.Message);
+            return 1;
+        }
+    }
+
+    private static async Task<int> RunSayobotSearchAsync(string query)
+    {
+        try
+        {
+            var (keyword, filters) = SearchQuery.Parse(query);
+            var raw = await SayobotClient.SearchWithDifficultiesAsync(keyword, 20, CancellationToken.None);
+            var items = raw.Where(x => filters.Count == 0 || SearchQuery.Matches(x.Set, x.Diff, filters)).ToList();
+            string filterText = filters.Count > 0 ? $"（筛选 {SearchQuery.Describe(filters)}）" : "";
+            Console.WriteLine($"搜索「{keyword}」{filterText} → 命中 {items.Count}/{raw.Count} 个难度");
+            foreach (var (set, diff) in items.Take(40))
+            {
+                Console.WriteLine(
+                    $"{set.Artist} - {set.Title} [{diff.Version}] | {SayobotClient.ModeText(diff.Mode)} | " +
+                    $"{SayobotClient.StatusText(set.Approved)} | OD {diff.OD:0.##} HP {diff.HP:0.##} ★{diff.Star:0.##} | sid {set.Sid}");
+            }
+            return 0;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("搜索失败: " + e.Message);
+            return 1;
+        }
+    }
+
     private static async Task<int> RunSayobotDlAsync(string[] args, string input)
     {
         if (!SayobotClient.TryParseSid(input, out long sid))
@@ -204,3 +345,6 @@ internal static class CliRunner
         return same ? 0 : 1;
     }
 }
+
+
+
