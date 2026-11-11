@@ -44,7 +44,7 @@ public class MainForm : Form
     private TextBox _dlDirBox = null!;
     private TextBox _dlSearchBox = null!;
     private RoundedButton _btnSearch = null!;
-    private ListView _searchList = null!;
+    private BufferedListView _searchList = null!;
     private ComboBox _sortCombo = null!;
     private RoundedButton _btnSortDir = null!;
     private PictureBox _coverBox = null!;
@@ -700,7 +700,7 @@ public class MainForm : Form
         panel.Controls.Add(searchRow, 0, 1);
 
         // 搜索结果
-        _searchList = new ListView
+        _searchList = new BufferedListView
         {
             Dock = DockStyle.Fill,
             View = View.Details,
@@ -981,12 +981,36 @@ public class MainForm : Form
     private static readonly double[] SearchColumnWeights = { 0.085, 0.325, 0.215, 0.075, 0.135, 0.055, 0.055, 0.055 };
 
     /// <summary>按当前列表宽度重新分配各列宽度（窗口缩放时自适应）。</summary>
+    private bool _resizingColumns;
+    private int _lastColumnWidth = -1;
+
     private void ResizeSearchColumns()
     {
+        if (_resizingColumns || _searchList == null || _searchList.Columns.Count == 0) return;
+        if (_searchList.ClientSize.Width <= 0) return;
+
+        // 宽度没明显变化就不重排，避免「Resize → 改列宽 → 再 Resize」的来回抖动
+        int target = _searchList.ClientSize.Width;
+        if (_lastColumnWidth >= 0 && Math.Abs(target - _lastColumnWidth) < 6) return;
+        _lastColumnWidth = target;
+
+        _resizingColumns = true;
+        try
+        {
+            ApplySearchColumns(target);
+        }
+        finally
+        {
+            _resizingColumns = false;
+        }
+    }
+
+    private void ApplySearchColumns(int clientWidth)
+    {
         if (_searchList == null || _searchList.Columns.Count == 0) return;
-        int avail = _searchList.ClientSize.Width - 4;
+        // ClientSize 已扣除垂直滚动条宽度，这里只留 4px 余量，避免「列宽 ↔ 滚动条」反复触发
+        int avail = clientWidth - 4;
         if (avail < 240) return;
-        if (_searchList.Items.Count > 0) avail -= 20; // 预留垂直滚动条宽度
 
         int count = _searchList.Columns.Count;
         int remaining = avail;
@@ -1003,7 +1027,7 @@ public class MainForm : Form
         // 兜底：若总宽仍超出（滚动条出现/DPI 差异），等比压缩，避免出现横向滚动条
         int total = 0;
         foreach (ColumnHeader col in _searchList.Columns) total += col.Width;
-        int limit = _searchList.ClientSize.Width - 4;
+        int limit = clientWidth - 4;
         if (total > limit && limit > 100)
         {
             double k = (double)limit / total;
@@ -1874,6 +1898,9 @@ public class MainForm : Form
         return $"{bytes / 1024.0 / 1024.0 / 1024.0:F2} GB";
     }
 }
+
+
+
 
 
 

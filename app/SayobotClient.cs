@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace OsuLazerToStable;
 
@@ -409,16 +409,35 @@ public static class SayobotClient
         {
             byte[] buf = new byte[256 * 1024];
             long done = 0;
+            long lastReported = -1;
+            long lastTick = Environment.TickCount64;
             int read;
             while ((read = await src.ReadAsync(buf, ct)) > 0)
             {
                 await dst.WriteAsync(buf.AsMemory(0, read), ct);
                 done += read;
-                progress?.Invoke(done, total);
+
+                // 限流：进度只在百分比变化或每 120ms 时回调，避免高频 BeginInvoke 让界面抖动
+                bool report;
+                if (total > 0)
+                {
+                    long pct = done * 100 / total;
+                    report = pct != lastReported;
+                    if (report) lastReported = pct;
+                }
+                else
+                {
+                    long now = Environment.TickCount64;
+                    report = now - lastTick >= 120;
+                    if (report) lastTick = now;
+                }
+                if (report) progress?.Invoke(done, total);
             }
+            progress?.Invoke(done, total);
         }
     }
 }
+
 
 
 

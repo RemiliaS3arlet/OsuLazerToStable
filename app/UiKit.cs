@@ -1,4 +1,4 @@
-using System.Drawing.Drawing2D;
+﻿using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 
 namespace OsuLazerToStable;
@@ -209,6 +209,22 @@ public class RoundedButton : Button
 }
 
 /// <summary>圆角进度条（支持进度与跑马灯两种模式）。</summary>
+/// <summary>双缓冲 ListView（自绘列表不闪）。</summary>
+public class BufferedListView : ListView
+{
+    public BufferedListView()
+    {
+        SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true);
+        DoubleBuffered = true;
+        SetStyle(ControlStyles.EnableNotifyMessage, true);
+    }
+
+    protected override void OnNotifyMessage(Message m)
+    {
+        // 屏蔽擦除背景消息，进一步减少闪烁
+        if (m.Msg != 0x14) base.OnNotifyMessage(m);
+    }
+}
 public class FlatProgress : Control
 {
     private int _value;
@@ -423,3 +439,4 @@ public class DropZone : Panel
             TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
     }
 }
+
